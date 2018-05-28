@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_page_name">Daftar Tiket</string>
+    <string name="no_data_available">Tidak Ada Tiket</string>
+    <string name="no_ticket">Nomor Tiket</string>
+    <string name="atm_id">ID ATM</string>
+    <string name="problem_desc">Deskripsi Masalah</string>
+    <string name="notes">Catatan</string>
+    <string name="atm_location">Lokasi ATM</string>
+    <string name="update_location">Perbarui Lokasi ATM</string>
+    <string name="accept">Terima</string>
+    <string name="finish">Selesai</string>
+    <string name="notes_hint">Isi catatan...</string>
+    <string name="login_button">Masuk</string>
+    <string name="ticket_details_page_name">Detail Tiket</string>
+    <string name="ticket_label">Tiket</string>
+    <string name="finished">Selesai</string>
+    <string name="ongoing">Sedang proses</string>
+    <string name="accept_alert_title">Menerima Tiket</string>
+    <string name="accept_alert_body">Apakah anda yakin untuk terima tiket ini?</string>
+    <string name="alert_yes_button">Ya</string>
+    <string name="alert_no_button">Tidak</string>
+    <string name="finish_alert_title">Selesaikan Tiket</string>
+    <string name="finish_alert_body">Apakah anda yakin untuk selesaikan tiket ini?</string>
+    <string name="log_out">Keluar</string>
+    <string name="atmlist_page_name">Daftar ATM</string>
+    <string name="error_email_empty">Mohon isi email anda</string>
+    <string name="error_password_empty">Mohon isi password anda</string>
+    <string name="error_email_format">Format email salah</string>
+</resources>

@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name" translatable="false">ATM Vendor App</string>
+    <string name="login_page_name" translatable="false">Login</string>
+    <string name="home_page_name">Tickets List</string>
+    <string name="no_data_available">No Tickets Available</string>
+    <string name="no_ticket">Ticket Number</string>
+    <string name="atm_id">ATM ID</string>
+    <string name="problem_desc">Problem Description</string>
+    <string name="notes">Notes</string>
+    <string name="atm_location">ATM Location</string>
+    <string name="update_location">Update ATM Location</string>
+    <string name="accept">Accept</string>
+    <string name="finish">Finish</string>
+    <string name="notes_hint">Fill notes…</string>
+    <string name="login_button">Login</string>
+    <string name="ticket_details_page_name">Ticket Details</string>
+    <string name="ticket_label">Ticket</string>
+    <string name="finished">Finished</string>
+    <string name="ongoing">Ongoing</string>
+    <string name="action_refresh" translatable="false">Refresh</string>
+    <string name="accept_alert_title">Accepting Ticket</string>
+    <string name="accept_alert_body">Are you sure to accept this ticket?</string>
+    <string name="alert_yes_button">Yes</string>
+    <string name="alert_no_button">No</string>
+    <string name="finish_alert_title">Finishing Ticket</string>
+    <string name="finish_alert_body">Are you sure to finish this ticket?</string>
+    <string name="log_out">Log Out</string>
+    <string name="nav_header_title" translatable="false">Vendor App</string>
+    <string name="home" translatable="false">Home</string>
+    <string name="atmlist_page_name">ATM List</string>
+    <string name="atm_label" translatable="false">ATM</string>
+    <string name="error_email_empty">Please fill in your email</string>
+    <string name="error_password_empty">Please fill in your password</string>
+    <string name="error_email_format">Wrong email format</string>
+</resources>

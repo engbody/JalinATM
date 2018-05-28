@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#E50112</color>
+    <color name="colorPrimaryDark">#C6000E</color>
+    <color name="colorAccent">#F93442</color>
+
+    <color name="orange">#f55f61</color>
+    <color name="orange_darker">#D53727</color>
+    <color name="orange_lighter">#f55f61</color>
+
+
+    <color name="grey900">#212121</color>
+    <color name="grey800">#424242</color>
+    <color name="grey700">#616161</color>
+    <color name="grey600">#757575</color>
+    <color name="grey500">#9E9E9E</color>
+    <color name="grey400">#BDBDBD</color>
+    <color name="grey300">#E0E0E0</color>
+    <color name="grey200">#EEEEEE</color>
+    <color name="grey100">#F5F5F5</color>
+    <color name="grey50">#FAFAFA</color>
+
+    <color name="colorWhite">#FFFFFF</color>
+    <color name="colorDarkGrey2">#999</color>
+    <color name="colorAccentToolbar">#ff8765</color>
+    <color name="colorDarkGrey">#79716E</color>
+
+    <color name="main_color_grey_50">@color/material_grey_50</color>
+    <color name="main_color_grey_100">@color/material_grey_100</color>
+    <color name="main_color_grey_300">@color/material_grey_300</color>
+    <color name="main_color_grey_600">@color/material_grey_600</color>
+    <color name="main_color_grey_800">@color/material_grey_800</color>
+    <color name="main_color_grey_900">@color/material_grey_900</color>
+
+    <color name="white">#ffffff</color>
+    <color name="white_15_percent">#26ffffff</color>
+    <color name="white_30_percent">#4Dffffff</color>
+
+    <color name="colorRed">#EF4747</color>
+    <color name="colorBlue">#00B0EC</color>
+    <color name="colorBlueDark">#0094c6</color>
+    <color name="colorLightRed">#f26440</color>
+    <color name="colorBlack">#000000</color>
+    <color name="colorGrey">#DDD</color>
+    <color name="colorDarkRed">#992928</color>
+    <color name="colorGreen">#99d047</color>
+    <color name="colorBlackGrey">#3a3a3c</color>
+
+    <color name="greyOverlay">#CCEEEEEE</color>
+    <color name="greenCheckout">#159B8A</color>
+    <color name="newRed">#F25C5E</color>
+    <color name="ratingYellow">#FFD52E</color>
+</resources>
