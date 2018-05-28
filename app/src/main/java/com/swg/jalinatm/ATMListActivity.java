@@ -131,43 +131,4 @@ public class ATMListActivity extends AppCompatActivity implements View.OnClickLi
         Log.e(TAG, "SaveInstace");
         super.onSaveInstanceState(outState);
     }
-
-    @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        // Restore UI state from the savedInstanceState.
-        // This bundle has also been passed to onCreate.
-        atmList = savedInstanceState.getParcelableArrayList("atmList");
-        Log.e(TAG, "RestoreInstace");
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.e(TAG, "Start state");
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.e(TAG, "Stop state");
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.e(TAG, "Destroy state");
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.e(TAG, "Pause state");
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.e(TAG, "Resume state");
-    }
 }

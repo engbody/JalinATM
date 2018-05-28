@@ -54,19 +54,6 @@ public class Preferences {
         Preferences.sharedPreferences = null;
     }
 
-    public static void setDetailObject(Context context, String key, Gson value){
-        Preferences.openPref(context);
-        SharedPreferences.Editor prefsPrivateEditor = Preferences.sharedPreferences.edit();
-
-        Gson gson = new Gson();
-        String json = gson.toJson(value);
-        prefsPrivateEditor.putString(key, json);
-
-        prefsPrivateEditor.commit();
-        prefsPrivateEditor = null;
-        Preferences.sharedPreferences = null;
-    }
-
     public static Boolean checkDetail(Context context, String key) {
         HashMap<String, String> result = new HashMap<String, String>();
 

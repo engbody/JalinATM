@@ -28,6 +28,8 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.swg.jalinatm.Adapter.TicketListAdapter;
 import com.swg.jalinatm.POJO.ATM;
 import com.swg.jalinatm.POJO.DataWrapper;
@@ -36,6 +38,7 @@ import com.swg.jalinatm.Utils.Preferences;
 
 import org.parceler.Parcels;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -77,21 +80,17 @@ public class HomeActivity extends AppCompatActivity {
 
         ticketList = new ArrayList<Ticket>();
         atmList = new ArrayList<ATM>();
+        Gson gson = new Gson();
 
-        if(Preferences.checkDetail(getApplicationContext(), "ticketList")){
-
+        if(savedInstanceState == null || !savedInstanceState.containsKey("ticketList")) {
+            Log.e(TAG, "create ticketList");
+            ticketList = new ArrayList<Ticket>();
+            ticketList.add(new Ticket("#1", "Cash Handler Fatal Error", "ATM tidak mengeluarkan uang, dan tidak respond", "M0001", null));
+            ticketList.add(new Ticket("#2", "Outstanding Down", "ATM tidak ada koneksi", "M0002", "1")); //accepted
+            ticketList.add(new Ticket("#3", "Cash Out", "Uang di ATM habis", "M0003", "2")); //finished
         } else {
-            if(savedInstanceState == null || !savedInstanceState.containsKey("ticketList")) {
-                Log.e(TAG, "create ticketList");
-                ticketList = new ArrayList<Ticket>();
-                ticketList.add(new Ticket("#1", "Cash Handler Fatal Error", "ATM tidak mengeluarkan uang, dan tidak respond", "M0001", null));
-                ticketList.add(new Ticket("#2", "Outstanding Down", "ATM tidak ada koneksi", "M0002", "1")); //accepted
-                ticketList.add(new Ticket("#3", "Cash Out", "Uang di ATM habis", "M0003", "2")); //finished
-            } else {
-                Log.e(TAG, "getTicketList from savedinstance");
-                ticketList = savedInstanceState.getParcelableArrayList("ticketList");
-//                Preferences.setDetail(getApplicationContext(), ticketList);
-            }
+            Log.e(TAG, "getTicketList from savedinstance");
+            ticketList = savedInstanceState.getParcelableArrayList("ticketList");
         }
 
         if(savedInstanceState == null || !savedInstanceState.containsKey("atmList")){
@@ -223,4 +222,34 @@ public class HomeActivity extends AppCompatActivity {
         Log.e(TAG, "SaveInstance");
         super.onSaveInstanceState(outState);
     }
+
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//        Log.e(TAG, "Start state");
+//    }
+//
+//    @Override
+//    protected void onStop() {
+//        super.onStop();
+//        Log.e(TAG, "Stop state");
+//    }
+//
+//    @Override
+//    protected void onDestroy() {
+//        super.onDestroy();
+//        Log.e(TAG, "Destroy state");
+//    }
+//
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        Log.e(TAG, "Pause state");
+//    }
+//
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        Log.e(TAG, "Resume state");
+//    }
 }
