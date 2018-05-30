@@ -80,6 +80,7 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
 
+        Log.e(TAG, "MAPS_API_KEY: " + getResources().getString(R.string.MAPS_API_KEY));
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);

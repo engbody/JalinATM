@@ -9,6 +9,10 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        def keystorePropertiesFile = rootProject.file("keystores/release.keystore.properties")
+        def keystoreProperties = new Properties()
+        keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+        resValue "string", "MAPS_API_KEY", keystoreProperties['MAPS_API_KEY']
     }
     buildTypes {
         release {

@@ -45,11 +45,11 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="www.kubis.id"
+                    android:host="www.jalin.com"
                     android:pathPrefix="/ticket"
                     android:scheme="http" />
                 <data
-                    android:host="kubis.id"
+                    android:host="jalin.com"
                     android:pathPrefix="/ticket"
                     android:scheme="http" />
             </intent-filter>
@@ -64,7 +64,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAwQIPqj0ryw-4f4wcgaMp0pHRLZ1OY4Sw" />
+            android:value="@string/MAPS_API_KEY" />
 
         <activity android:name=".ATMDetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />
