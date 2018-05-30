@@ -32,4 +32,10 @@
     <string name="error_email_empty">Please fill in your email</string>
     <string name="error_password_empty">Please fill in your password</string>
     <string name="error_email_format">Wrong email format</string>
+    <string name="address" translatable="false">Address</string>
+    <string name="unknown_place">Unknown place</string>
+    <string name="code_label">Code</string>
+    <string name="atm_detail_page_name">ATM Details</string>
+    <string name="atm_description">ATM Description</string>
+    <string name="atm_address">ATM Address</string>
 </resources>

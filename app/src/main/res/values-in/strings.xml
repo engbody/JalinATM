@@ -27,4 +27,9 @@
     <string name="error_email_empty">Mohon isi email anda</string>
     <string name="error_password_empty">Mohon isi password anda</string>
     <string name="error_email_format">Format email salah</string>
+    <string name="unknown_place">Tempat tidak diketahui</string>
+    <string name="code_label">Kode</string>
+    <string name="atm_detail_page_name">Detail ATM</string>
+    <string name="atm_description">Deskripsi ATM</string>
+    <string name="atm_address">Alamat ATM</string>
 </resources>

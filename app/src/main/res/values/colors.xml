@@ -4,6 +4,8 @@
     <color name="colorPrimaryDark">#C6000E</color>
     <color name="colorAccent">#F93442</color>
 
+    <color name="red_logo">#E50112</color>
+
     <color name="orange">#f55f61</color>
     <color name="orange_darker">#D53727</color>
     <color name="orange_lighter">#f55f61</color>

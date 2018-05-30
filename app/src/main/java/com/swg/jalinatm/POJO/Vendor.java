@@ -2,6 +2,8 @@ package com.swg.jalinatm.POJO;
 
 import android.location.Location;
 
+import com.google.android.gms.maps.model.LatLng;
+
 /**
  * Created by Andrew Widjaja on 5/28/2018.
  */
@@ -12,7 +14,7 @@ public class Vendor {
     private String name;
     private String org;
     private String description;
-    private Location loc;
+    private LatLng loc;
 
     public Vendor(String id, String name, String org) {
         this.id = id;
@@ -52,11 +54,11 @@ public class Vendor {
         this.description = description;
     }
 
-    public Location getLoc() {
+    public LatLng getLoc() {
         return loc;
     }
 
-    public void setLoc(Location loc) {
+    public void setLoc(LatLng loc) {
         this.loc = loc;
     }
 }

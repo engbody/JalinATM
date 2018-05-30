@@ -11,11 +11,12 @@
     <style name="AppTheme.NoActionBar" parent="AppTheme">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:windowBackground">@color/md_white_1000</item>
     </style>
 
     <style name="ToolbarStyle" parent="@style/ThemeOverlay.AppCompat.ActionBar">
         <!-- Customize color of navigation drawer icon and back arrow -->
-        <item name="colorControlNormal">@color/white</item>
+        <item name="colorControlNormal">@color/md_white_1000</item>
     </style>
 
     <style name="AppTheme.ListHeading" parent="TextAppearance.AppCompat.Small">

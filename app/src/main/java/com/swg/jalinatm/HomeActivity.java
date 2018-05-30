@@ -7,6 +7,8 @@ import android.arch.lifecycle.LifecycleRegistry;
 import android.arch.lifecycle.OnLifecycleEvent;
 import android.content.Intent;
 import android.database.DataSetObserver;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
@@ -28,6 +30,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.swg.jalinatm.Adapter.TicketListAdapter;
@@ -38,8 +41,11 @@ import com.swg.jalinatm.Utils.Preferences;
 
 import org.parceler.Parcels;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -67,10 +73,11 @@ public class HomeActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.e(TAG, "Create state");
+        Log.i(TAG, "Create state");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
+
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -80,28 +87,42 @@ public class HomeActivity extends AppCompatActivity {
 
         ticketList = new ArrayList<Ticket>();
         atmList = new ArrayList<ATM>();
-        Gson gson = new Gson();
 
         if(savedInstanceState == null || !savedInstanceState.containsKey("ticketList")) {
-            Log.e(TAG, "create ticketList");
+            Log.i(TAG, "create ticketList");
             ticketList = new ArrayList<Ticket>();
-            ticketList.add(new Ticket("#1", "Cash Handler Fatal Error", "ATM tidak mengeluarkan uang, dan tidak respond", "M0001", null));
-            ticketList.add(new Ticket("#2", "Outstanding Down", "ATM tidak ada koneksi", "M0002", "1")); //accepted
-            ticketList.add(new Ticket("#3", "Cash Out", "Uang di ATM habis", "M0003", "2")); //finished
+            ticketList.add(new Ticket("#1", "Cash Handler Fatal Error", "ATM tidak mengeluarkan uang, dan tidak respond", "ATM1", null));
+            ticketList.add(new Ticket("#2", "Outstanding Down", "ATM tidak ada koneksi", "ATM2", "1")); //accepted
+            ticketList.add(new Ticket("#3", "Cash Out", "Uang di ATM habis", "ATM3", "2")); //finished
         } else {
-            Log.e(TAG, "getTicketList from savedinstance");
+            Log.i(TAG, "getTicketList from savedinstance");
             ticketList = savedInstanceState.getParcelableArrayList("ticketList");
         }
 
+
+
         if(savedInstanceState == null || !savedInstanceState.containsKey("atmList")){
-            Log.e(TAG, "create atmList");
-            atmList.add(new ATM("ATM1", "ATM area Jakarta Pusat", "Grand Indonesia"));
-            atmList.add(new ATM("ATM2", "ATM area Jakarta Selatan", "Epicentrum"));
-            atmList.add(new ATM("ATM3", "ATM area Jakarta Timur", "Kelapa Gading Mall"));
-            atmList.add(new ATM("ATM4", "ATM area Jakarta Barat", "Binus"));
+            Log.i(TAG, "create atmList");
+            atmList.add(new ATM("ATM1", "Di dalam gedung Grand Indonesia", null, new LatLng(-6.1950034, 106.81978660000004)));
+            atmList.add(new ATM("ATM2", "Di dalam gedung Epiwalk", null, new LatLng(-6.2182575, 106.83518779999997)));
+            atmList.add(new ATM("ATM3", "Di dalam gedung Mall Kelapa Gading", null, new LatLng(-6.157519, 106.90802080000003)));
+            atmList.add(new ATM("ATM4", "Di dalam gedung Universitas Bina Nusantara Anggrek", null, new LatLng(-6.2018064, 106.78159240000002)));
         } else {
-            Log.e(TAG, "getAtmList from savedinstance");
+            Log.i(TAG, "getAtmList from savedinstance");
             atmList = savedInstanceState.getParcelableArrayList("atmList");
+        }
+
+        Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+        for(ATM atm : atmList){
+            try {
+                List<Address> addresses = geocoder.getFromLocation(atm.getLoc().latitude, atm.getLoc().longitude, 1);
+                Address address = addresses.get(0);
+                atm.setAddress(address.getAddressLine(0));
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.e(TAG, e.getMessage());
+            }
         }
 
         ticketListAdapter = new TicketListAdapter(this, ticketList);
@@ -110,7 +131,7 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onChanged() {
                 super.onChanged();
-                Log.e(TAG, "datasetchanged");
+                Log.i(TAG, "datasetchanged");
                 if (ticketListAdapter.getCount() == 0) {
                     empty_view.setVisibility(View.VISIBLE);
                     list_tickets.setVisibility(View.GONE);
@@ -144,10 +165,19 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Ticket ticket = (Ticket) parent.getItemAtPosition(position);
-                Log.e(TAG, "Ticket no: " + ticket.getTicketNumber());
+                Log.i(TAG, "Ticket no: " + ticket.getTicketNumber());
+
+                ATM atmTicket = new ATM();
+                for(ATM atm : atmList){
+                    if(atm.getId().equals(ticket.getMachineNumber())){
+                        atmTicket = atm;
+                        break;
+                    }
+                }
 
                 Intent intent = new Intent(HomeActivity.this, TicketDetailActivity.class);
                 intent.putExtra("ticket", Parcels.wrap(ticket));
+                intent.putExtra("atm", Parcels.wrap(atmTicket));
                 startActivity(intent);
             }
         });
@@ -161,7 +191,10 @@ public class HomeActivity extends AppCompatActivity {
                 switch(item.getItemId()){
                     case R.id.nav_update_location_atm:
                         Intent intent = new Intent(HomeActivity.this, ATMListActivity.class);
-                        intent.putExtra("atmlist", new DataWrapper(atmList));
+//                        intent.putExtra("atmlist", new DataWrapper(atmList));
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelableArrayList("atmlist", atmList);
+                        intent.putExtras(bundle);
                         startActivity(intent);
                         break;
                     case R.id.nav_log_out:
@@ -183,8 +216,8 @@ public class HomeActivity extends AppCompatActivity {
         String appLinkAction = appLinkIntent.getAction();
         Uri appLinkData = appLinkIntent.getData();
         if(appLinkData!=null) {
-            Log.e(TAG, appLinkData.toString());
-            Log.e(TAG, appLinkData.getQueryParameter("key"));
+            Log.i(TAG, appLinkData.toString());
+            Log.i(TAG, appLinkData.getQueryParameter("key"));
             if(appLinkData.getQueryParameter("key")!=null){
                 //do something
             }
@@ -205,7 +238,7 @@ public class HomeActivity extends AppCompatActivity {
                 drawerLayout.openDrawer(GravityCompat.START);
                 return true;
             case R.id.action_refresh:
-                ticketList.add(new Ticket("#4", "Receipt Printer Paper Out", "Kertas habis", "M0004", "2")); //finished
+                ticketList.add(new Ticket("#4", "Receipt Printer Paper Out", "Kertas habis", "ATM4", "2")); //finished
                 empty_view.setVisibility(View.GONE);
                 list_tickets.setVisibility(View.GONE);
                 progressBar.setVisibility(View.VISIBLE);
@@ -219,7 +252,7 @@ public class HomeActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         outState.putParcelableArrayList("ticketList", ticketList);
         outState.putParcelableArrayList("atmList", atmList);
-        Log.e(TAG, "SaveInstance");
+        Log.i(TAG, "SaveInstance");
         super.onSaveInstanceState(outState);
     }
 

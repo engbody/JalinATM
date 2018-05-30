@@ -3,6 +3,8 @@ package com.swg.jalinatm.POJO;
 import android.location.Location;
 import android.os.Parcelable;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import org.parceler.Parcel;
 
 import java.io.Serializable;
@@ -12,26 +14,27 @@ import java.io.Serializable;
  */
 
 @Parcel
-public class ATM implements Serializable, Parcelable {
+public class ATM implements Parcelable {
 
     private String id;
     private String description;
     private String address;
-    private Location loc;
+    private LatLng loc;
 
     public ATM(){}
 
-    public ATM(String id, String description, String address) {
+    public ATM(String id, String description, String address, LatLng loc) {
         this.id = id;
         this.description = description;
         this.address = address;
+        this.loc = loc;
     }
 
     protected ATM(android.os.Parcel in) {
         id = in.readString();
         description = in.readString();
         address = in.readString();
-        loc = in.readParcelable(Location.class.getClassLoader());
+        loc = new LatLng(in.readDouble(), in.readDouble());
     }
 
     public static final Creator<ATM> CREATOR = new Creator<ATM>() {
@@ -70,11 +73,11 @@ public class ATM implements Serializable, Parcelable {
         this.address = address;
     }
 
-    public Location getLoc() {
+    public LatLng getLoc() {
         return loc;
     }
 
-    public void setLoc(Location loc) {
+    public void setLoc(LatLng loc) {
         this.loc = loc;
     }
 
@@ -88,6 +91,7 @@ public class ATM implements Serializable, Parcelable {
         dest.writeString(id);
         dest.writeString(description);
         dest.writeString(address);
-        dest.writeParcelable(loc, flags);
+        dest.writeDouble(loc.latitude);
+        dest.writeDouble(loc.longitude);
     }
 }

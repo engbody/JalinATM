@@ -1,5 +1,6 @@
 package com.swg.jalinatm;
 
+import android.content.Intent;
 import android.database.DataSetObserver;
 import android.os.Handler;
 import android.os.Looper;
@@ -11,13 +12,17 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.swg.jalinatm.Adapter.ATMListAdapter;
 import com.swg.jalinatm.POJO.ATM;
 import com.swg.jalinatm.POJO.DataWrapper;
+
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 
@@ -52,9 +57,10 @@ public class ATMListActivity extends AppCompatActivity implements View.OnClickLi
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         if(savedInstanceState == null || !savedInstanceState.containsKey("atmList")){
-            wrapper = (DataWrapper) getIntent().getSerializableExtra("atmlist");
-            atmList = wrapper.getAtmList();
-            Log.e(TAG, atmList.get(0).getId());
+//            wrapper = (DataWrapper) getIntent().getSerializableExtra("atmlist");
+//            atmList = wrapper.getAtmList();
+            atmList = getIntent().getExtras().getParcelableArrayList("atmlist");
+            Log.i(TAG, atmList.get(0).getId());
         } else {
             atmList = savedInstanceState.getParcelableArrayList("atmList");
         }
@@ -94,6 +100,15 @@ public class ATMListActivity extends AppCompatActivity implements View.OnClickLi
                 }
             }
         }, 1000);
+
+        list_atm.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(ATMListActivity.this, ATMDetailActivity.class);
+                intent.putExtra("atm", Parcels.wrap(atmList.get(position)));
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -112,7 +127,7 @@ public class ATMListActivity extends AppCompatActivity implements View.OnClickLi
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_refresh:
-                atmList.add(new ATM("ATM5", "ATM area Jakarta Utara", "PIK"));
+                atmList.add(new ATM("ATM5", "ATM area Jakarta Utara", "PIK", new LatLng(-6.2018064, 106.7794037)));
                 empty_view.setVisibility(View.GONE);
                 list_atm.setVisibility(View.GONE);
                 progressBar.setVisibility(View.VISIBLE);
@@ -128,7 +143,7 @@ public class ATMListActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putParcelableArrayList("atmList", atmList);
-        Log.e(TAG, "SaveInstace");
+        Log.i(TAG, "SaveInstace");
         super.onSaveInstanceState(outState);
     }
 }

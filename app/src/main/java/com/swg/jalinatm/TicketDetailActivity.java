@@ -1,6 +1,9 @@
 package com.swg.jalinatm;
 
 import android.content.DialogInterface;
+import android.location.Address;
+import android.location.Geocoder;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,19 +16,32 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.swg.jalinatm.POJO.ATM;
 import com.swg.jalinatm.POJO.Ticket;
 
 import org.parceler.Parcels;
+import org.w3c.dom.Text;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class TicketDetailActivity extends AppCompatActivity implements View.OnClickListener {
+public class TicketDetailActivity extends AppCompatActivity implements View.OnClickListener, OnMapReadyCallback {
 
     @BindView(R.id.ticket_summary)
     LinearLayout ticket_layout;
-    @BindView(R.id.notes_layout)
-    LinearLayout notes_layout;
+//    @BindView(R.id.notes_layout)
+//    LinearLayout notes_layout;
     @BindView(R.id.location_summary)
     LinearLayout location_layout;
     @BindView(R.id.toolbar)
@@ -34,8 +50,12 @@ public class TicketDetailActivity extends AppCompatActivity implements View.OnCl
     TextView tv_ticket;
     @BindView(R.id.tv_atmid)
     TextView tv_atmid;
+    @BindView(R.id.tv_address)
+    TextView tv_address;
     @BindView(R.id.tv_problem)
     TextView tv_problem;
+    @BindView(R.id.tv_summary)
+    TextView tv_summary;
     @BindView(R.id.btn_accept)
     Button btn_accept;
     @BindView(R.id.btn_finish)
@@ -52,12 +72,15 @@ public class TicketDetailActivity extends AppCompatActivity implements View.OnCl
     private AlertDialog alertDialog;
 
     private Ticket ticket;
+    private ATM atm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ticket_detail);
         ButterKnife.bind(this);
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -66,18 +89,21 @@ public class TicketDetailActivity extends AppCompatActivity implements View.OnCl
         btn_accept.setOnClickListener(this);
         btn_finish.setOnClickListener(this);
         btn_update_location.setOnClickListener(this);
+        mapFragment.getMapAsync(this);
 
         alertDialog = new AlertDialog.Builder(TicketDetailActivity.this).create();
 
         ticket_layout.setBackground(getDrawable(R.drawable.rounded_layout));
-        notes_layout.setBackground(getDrawable(R.drawable.rounded_layout));
+//        notes_layout.setBackground(getDrawable(R.drawable.rounded_layout));
         location_layout.setBackground(getDrawable(R.drawable.rounded_layout));
 
+        atm = (ATM) Parcels.unwrap(getIntent().getParcelableExtra("atm"));
         ticket = (Ticket) Parcels.unwrap(getIntent().getParcelableExtra("ticket"));
         if(ticket != null){
             tv_ticket.setText(ticket.getTicketNumber());
             tv_atmid.setText(ticket.getMachineNumber());
             tv_problem.setText(ticket.getDescription());
+            tv_summary.setText(ticket.getSummary());
             if(ticket.getTicketState() != null) {
                 if (ticket.getTicketState().equals("1")) { //accepted
                     gap.setVisibility(View.GONE);
@@ -119,7 +145,7 @@ public class TicketDetailActivity extends AppCompatActivity implements View.OnCl
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btn_accept:
-                Log.e(TAG, "btn_accept pressed");
+                Log.i(TAG, "btn_accept pressed");
                 setAlertDialog(getResources().getString(R.string.accept_alert_title), getResources().getString(R.string.accept_alert_body));
                 break;
             case R.id.btn_finish:
@@ -132,12 +158,26 @@ public class TicketDetailActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Log.e(TAG, "option item pressed");
+        Log.i(TAG, "option item pressed");
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        if(atm != null){
+            if(atm.getLoc()!= null){
+                LatLng markerLoc = new LatLng(atm.getLoc().latitude, atm.getLoc().longitude);
+                CameraPosition position = new CameraPosition.Builder().target(markerLoc).zoom(17).build();
+                googleMap.addMarker(new MarkerOptions().position(markerLoc));
+                googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(position));
+                if(atm.getAddress()!=null && !atm.getAddress().equals("")) tv_address.setText(atm.getAddress());
+                else tv_address.setText(getResources().getString(R.string.unknown_place));
+            }
+        }
     }
 }

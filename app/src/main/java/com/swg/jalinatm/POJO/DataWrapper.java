@@ -1,7 +1,5 @@
 package com.swg.jalinatm.POJO;
 
-import com.swg.jalinatm.POJO.ATM;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 
