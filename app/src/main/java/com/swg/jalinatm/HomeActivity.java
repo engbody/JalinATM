@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.database.DataSetObserver;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.LocationListener;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
@@ -30,6 +31,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
