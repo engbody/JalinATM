@@ -39,6 +39,8 @@ public class ATMDetailActivity extends AppCompatActivity implements OnMapReadyCa
     TextView tv_atmadesc;
     @BindView(R.id.btn_update_location)
     Button btn_update_location;
+    @BindView(R.id.root_layout)
+    LinearLayout root_layout;
 
     private final static String TAG = "ATMDetailActivity";
 

@@ -3,7 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.swg.jalinatm">
 
-
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
         android:allowBackup="true"
@@ -11,8 +13,10 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        android:theme="@style/AppTheme.NoActionBar">
+        <activity android:name=".MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Fullscreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -22,12 +26,10 @@
         <activity
             android:name=".LoginActivity"
             android:label="@string/login_page_name"
-            android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".HomeActivity"
-            android:label="@string/home_page_name"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:label="@string/home_page_name">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -56,18 +58,16 @@
         </activity>
         <activity
             android:name=".TicketDetailActivity"
-            android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name=".ATMListActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:name=".ATMListActivity" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/MAPS_API_KEY" />
 
-        <activity android:name=".ATMDetailActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ATMDetailActivity" />
     </application>
 
 </manifest>
