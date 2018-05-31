@@ -1,9 +1,6 @@
 package com.swg.jalinatm;
 
 import android.content.DialogInterface;
-import android.location.Address;
-import android.location.Geocoder;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -27,11 +24,6 @@ import com.swg.jalinatm.POJO.ATM;
 import com.swg.jalinatm.POJO.Ticket;
 
 import org.parceler.Parcels;
-import org.w3c.dom.Text;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -66,6 +58,8 @@ public class TicketDetailActivity extends AppCompatActivity implements View.OnCl
     View gap;
     @BindView(R.id.layout_accept_finish)
     LinearLayout layout_accept_finish;
+    @BindView(R.id.root_layout)
+    LinearLayout root_layout;
 
     private final static String TAG = "TicketDetailActivity";
 

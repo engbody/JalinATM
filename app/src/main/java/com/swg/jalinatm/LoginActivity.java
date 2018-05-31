@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 
 import com.swg.jalinatm.Utils.Hash;
 import com.swg.jalinatm.Utils.Preferences;
@@ -23,6 +24,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     EditText input_email;
     @BindView(R.id.input_password)
     EditText input_password;
+    @BindView(R.id.root_layout)
+    LinearLayout root_layout;
 
     String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
 

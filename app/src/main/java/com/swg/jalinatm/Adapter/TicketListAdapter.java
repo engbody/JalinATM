@@ -74,4 +74,10 @@ public class TicketListAdapter extends BaseAdapter {
 
         return convertView;
     }
+
+    private void clearAll(){
+        this.data = new ArrayList<>();
+    }
+
+
 }
