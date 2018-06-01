@@ -27,8 +27,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.swg.jalinatm.Adapter.TicketListAdapter;
 import com.swg.jalinatm.POJO.ATM;
 import com.swg.jalinatm.POJO.Ticket;
+import com.swg.jalinatm.POJO.Vendor;
 import com.swg.jalinatm.Utils.InternetCheck;
 import com.swg.jalinatm.Utils.Preferences;
+import com.swg.jalinatm.Utils.Tracker;
 
 import org.parceler.Parcels;
 
@@ -59,9 +61,10 @@ public class HomeActivity extends AppCompatActivity {
     ArrayList<Ticket> ticketList;
     ArrayList<ATM> atmList;
 
-    private final static String TAG = "HomeActivity";
+    private Tracker tracker;
+    private Vendor vendor;
 
-    private Bundle savedInstanceState;
+    private final static String TAG = "HomeActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,9 +81,13 @@ public class HomeActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_drawer_white);
 
+        vendor = new Vendor("ID001", "Thomas", "BNI");
+
         new InternetCheck(internet -> {
             Log.e(TAG, String.valueOf(internet));
             if(internet) {
+                tracker = new Tracker(this, vendor);
+                if(!tracker.isGoogleApiConnected()) tracker.connectGoogleApi();
                 reloadDataandView();
             } else {
                 setVisibilityNoInternet();
@@ -88,21 +95,30 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         list_tickets.setOnItemClickListener((parent, view, position, id) -> {
-            Ticket ticket = (Ticket) parent.getItemAtPosition(position);
-            Log.i(TAG, "Ticket no: " + ticket.getTicketNumber());
-
-            ATM atmTicket = new ATM();
-            for (ATM atm : atmList) {
-                if (atm.getId().equals(ticket.getMachineNumber())) {
-                    atmTicket = atm;
-                    break;
+            if(parent.getItemAtPosition(position)!=null) {
+                if(tracker!=null){
+                    if(vendor.getLoc()!=null) Log.e(TAG, "getLatitude: " + vendor.getLoc().latitude + " getLongitude: " + vendor.getLoc().longitude);
                 }
-            }
+                Ticket ticket = (Ticket) parent.getItemAtPosition(position);
+                Log.i(TAG, "Ticket no: " + ticket.getTicketNumber());
 
-            Intent intent = new Intent(HomeActivity.this, TicketDetailActivity.class);
-            intent.putExtra("ticket", Parcels.wrap(ticket));
-            intent.putExtra("atm", Parcels.wrap(atmTicket));
-            startActivity(intent);
+                ATM atmTicket = new ATM();
+                for (ATM atm : atmList) {
+                    if (atm.getId().equals(ticket.getMachineNumber())) {
+                        atmTicket = atm;
+                        break;
+                    }
+                }
+
+                Intent intent = new Intent(HomeActivity.this, TicketDetailActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("ticket", Parcels.wrap(ticket));
+                bundle.putParcelable("atm", Parcels.wrap(atmTicket));
+                intent.putExtras(bundle);
+//                intent.putExtra("ticket", Parcels.wrap(ticket));
+//                intent.putExtra("atm", Parcels.wrap(atmTicket));
+                startActivity(intent);
+            }
         });
 
         getIntentData();
@@ -239,17 +255,21 @@ public class HomeActivity extends AppCompatActivity {
 //        super.onSaveInstanceState(outState);
 //    }
 
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        Log.e(TAG, "Start state");
-//    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.i(TAG, "Start state");
+        if(tracker!=null) {
+            if(!tracker.isGoogleApiConnected()) tracker.connectGoogleApi();
+        }
+    }
 //
-//    @Override
-//    protected void onStop() {
-//        super.onStop();
-//        Log.e(TAG, "Stop state");
-//    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.e(TAG, "Stop state");
+        if(tracker.isGoogleApiConnected()) tracker.disconnectGoogleApi();
+    }
 //
 //    @Override
 //    protected void onDestroy() {
@@ -257,15 +277,19 @@ public class HomeActivity extends AppCompatActivity {
 //        Log.e(TAG, "Destroy state");
 //    }
 //
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        Log.e(TAG, "Pause state");
-//    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.i(TAG, "Pause state");
+        tracker.stopLocationUpdate();
+    }
 //
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        Log.e(TAG, "Resume state");
-//    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.i(TAG, "Resume state");
+        if(tracker!=null) {
+            if (tracker.isGoogleApiConnected()) tracker.startLocationUpdate();
+        }
+    }
 }

@@ -14,7 +14,7 @@ import java.io.Serializable;
  */
 
 @Parcel
-public class ATM implements Parcelable {
+public class ATM {
 
     private String id;
     private String description;
@@ -30,24 +30,24 @@ public class ATM implements Parcelable {
         this.loc = loc;
     }
 
-    protected ATM(android.os.Parcel in) {
-        id = in.readString();
-        description = in.readString();
-        address = in.readString();
-        loc = new LatLng(in.readDouble(), in.readDouble());
-    }
+//    protected ATM(android.os.Parcel in) {
+//        id = in.readString();
+//        description = in.readString();
+//        address = in.readString();
+//        loc = new LatLng(in.readDouble(), in.readDouble());
+//    }
 
-    public static final Creator<ATM> CREATOR = new Creator<ATM>() {
-        @Override
-        public ATM createFromParcel(android.os.Parcel in) {
-            return new ATM(in);
-        }
-
-        @Override
-        public ATM[] newArray(int size) {
-            return new ATM[size];
-        }
-    };
+//    public static final Creator<ATM> CREATOR = new Creator<ATM>() {
+//        @Override
+//        public ATM createFromParcel(android.os.Parcel in) {
+//            return new ATM(in);
+//        }
+//
+//        @Override
+//        public ATM[] newArray(int size) {
+//            return new ATM[size];
+//        }
+//    };
 
     public String getId() {
         return id;
@@ -81,17 +81,17 @@ public class ATM implements Parcelable {
         this.loc = loc;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(android.os.Parcel dest, int flags) {
-        dest.writeString(id);
-        dest.writeString(description);
-        dest.writeString(address);
-        dest.writeDouble(loc.latitude);
-        dest.writeDouble(loc.longitude);
-    }
+//    @Override
+//    public int describeContents() {
+//        return 0;
+//    }
+//
+//    @Override
+//    public void writeToParcel(android.os.Parcel dest, int flags) {
+//        dest.writeString(id);
+//        dest.writeString(description);
+//        dest.writeString(address);
+//        dest.writeDouble(loc.latitude);
+//        dest.writeDouble(loc.longitude);
+//    }
 }

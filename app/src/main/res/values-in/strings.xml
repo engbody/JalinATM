@@ -34,4 +34,5 @@
     <string name="atm_address">Alamat ATM</string>
     <string name="no_internet_connection">Tidak ada koneksi internet</string>
     <string name="no_internet_connection_toast">Anda tidak memiliki koneksi internet apa pun</string>
+    <string name="check_permission">Harap aktifkan izin aplikasi apa pun pada pengaturan</string>
 </resources>

@@ -11,6 +11,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.swg.jalinatm.Utils.InternetCheck;
 import com.swg.jalinatm.Utils.Preferences;
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
                     finish();
                 }
             } else {
+                Toast.makeText(this, getResources().getString(R.string.no_internet_connection_toast), Toast.LENGTH_LONG).show();
                 finishAffinity();
             }
         });
@@ -100,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
+                    Toast.makeText(this, getResources().getString(R.string.check_permission), Toast.LENGTH_LONG).show();
                     finishAffinity();
                 }
                 return;

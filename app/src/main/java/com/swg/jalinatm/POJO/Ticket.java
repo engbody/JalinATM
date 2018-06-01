@@ -9,7 +9,7 @@ import org.parceler.Parcel;
  */
 
 @Parcel
-public class Ticket implements Parcelable{
+public class Ticket{
 
     private String ticketNumber;
     private String summary;
@@ -28,25 +28,25 @@ public class Ticket implements Parcelable{
         this.ticketState = ticketState;
     }
 
-    protected Ticket(android.os.Parcel in) {
-        ticketNumber = in.readString();
-        summary = in.readString();
-        description = in.readString();
-        machineNumber = in.readString();
-        ticketState = in.readString();
-    }
+//    protected Ticket(android.os.Parcel in) {
+//        ticketNumber = in.readString();
+//        summary = in.readString();
+//        description = in.readString();
+//        machineNumber = in.readString();
+//        ticketState = in.readString();
+//    }
 
-    public static final Creator<Ticket> CREATOR = new Creator<Ticket>() {
-        @Override
-        public Ticket createFromParcel(android.os.Parcel in) {
-            return new Ticket(in);
-        }
-
-        @Override
-        public Ticket[] newArray(int size) {
-            return new Ticket[size];
-        }
-    };
+//    public static final Creator<Ticket> CREATOR = new Creator<Ticket>() {
+//        @Override
+//        public Ticket createFromParcel(android.os.Parcel in) {
+//            return new Ticket(in);
+//        }
+//
+//        @Override
+//        public Ticket[] newArray(int size) {
+//            return new Ticket[size];
+//        }
+//    };
 
     public String getTicketNumber() {
         return ticketNumber;
@@ -88,17 +88,17 @@ public class Ticket implements Parcelable{
         this.ticketState = ticketState;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(android.os.Parcel dest, int flags) {
-        dest.writeString(ticketNumber);
-        dest.writeString(summary);
-        dest.writeString(description);
-        dest.writeString(machineNumber);
-        dest.writeString(ticketState);
-    }
+//    @Override
+//    public int describeContents() {
+//        return 0;
+//    }
+//
+//    @Override
+//    public void writeToParcel(android.os.Parcel dest, int flags) {
+//        dest.writeString(ticketNumber);
+//        dest.writeString(summary);
+//        dest.writeString(description);
+//        dest.writeString(machineNumber);
+//        dest.writeString(ticketState);
+//    }
 }

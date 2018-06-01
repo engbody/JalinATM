@@ -7,7 +7,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 
 /**
- * Created by user on 5/31/2018.
+ * Created by Andrew Widjaja on 5/31/2018.
  */
 
 public class InternetCheck extends AsyncTask<Void, Void, Boolean> {

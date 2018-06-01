@@ -75,7 +75,9 @@ public class ATMListActivity extends AppCompatActivity implements View.OnClickLi
 
         list_atm.setOnItemClickListener((parent, view, position, id) -> {
             Intent intent = new Intent(ATMListActivity.this, ATMDetailActivity.class);
-            intent.putExtra("atm", Parcels.wrap(atmList.get(position)));
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("atm", Parcels.wrap(atmList.get(position)));
+            intent.putExtras(bundle);
             startActivity(intent);
         });
     }
