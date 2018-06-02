@@ -35,4 +35,8 @@
     <string name="no_internet_connection">Tidak ada koneksi internet</string>
     <string name="no_internet_connection_toast">Anda tidak memiliki koneksi internet apa pun</string>
     <string name="check_permission">Harap aktifkan izin aplikasi apa pun pada pengaturan</string>
+    <string name="feedback_label">Umpan Balik</string>
+    <string name="feedback_hint">Berikan umpan balik disini...</string>
+    <string name="submit_label">Berikan</string>
+    <string name="cancel_label">Batal</string>
 </resources>

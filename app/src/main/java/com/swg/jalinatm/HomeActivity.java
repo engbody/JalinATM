@@ -117,7 +117,7 @@ public class HomeActivity extends AppCompatActivity {
                 intent.putExtras(bundle);
 //                intent.putExtra("ticket", Parcels.wrap(ticket));
 //                intent.putExtra("atm", Parcels.wrap(atmTicket));
-                startActivity(intent);
+                startActivityForResult(intent, 0);
             }
         });
 
@@ -281,7 +281,9 @@ public class HomeActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         Log.i(TAG, "Pause state");
-        tracker.stopLocationUpdate();
+        if(tracker!=null) {
+            tracker.stopLocationUpdate();
+        }
     }
 //
     @Override
@@ -290,6 +292,15 @@ public class HomeActivity extends AppCompatActivity {
         Log.i(TAG, "Resume state");
         if(tracker!=null) {
             if (tracker.isGoogleApiConnected()) tracker.startLocationUpdate();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode==1){
+            setVisibilityLoading();
+            reloadDataandView();
         }
     }
 }

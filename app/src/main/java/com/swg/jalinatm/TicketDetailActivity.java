@@ -1,6 +1,7 @@
 package com.swg.jalinatm;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -108,8 +109,10 @@ public class TicketDetailActivity extends AppCompatActivity implements View.OnCl
                 }
             } else {
                 layout_accept_finish.setVisibility(View.VISIBLE);
+                layout_accept_finish.setGravity(Gravity.CENTER);
                 btn_accept.setVisibility(View.VISIBLE);
-                btn_finish.setVisibility(View.VISIBLE);
+                btn_finish.setVisibility(View.GONE);
+                gap.setVisibility(View.GONE);
             }
         } else {
             finish();
@@ -120,10 +123,10 @@ public class TicketDetailActivity extends AppCompatActivity implements View.OnCl
         alertDialog.setTitle(title);
         alertDialog.setMessage(body);
         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getResources().getString(R.string.alert_yes_button),
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
+                (dialog, which) -> {
+                    dialog.dismiss();
+                    setResult(1);
+                    finish();
                 });
         alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, getResources().getString(R.string.alert_no_button),
                 new DialogInterface.OnClickListener() {
@@ -143,7 +146,11 @@ public class TicketDetailActivity extends AppCompatActivity implements View.OnCl
                 setAlertDialog(getResources().getString(R.string.accept_alert_title), getResources().getString(R.string.accept_alert_body));
                 break;
             case R.id.btn_finish:
-                setAlertDialog(getResources().getString(R.string.finish_alert_title), getResources().getString(R.string.finish_alert_body));
+                Intent intent = new Intent(TicketDetailActivity.this, FeedbackActivity.class);
+//                            Bundle bundle = new Bundle();
+//                            bundle.putParcelable("atm", Parcels.wrap(atmList.get(position)));
+//                            intent.putExtras(bundle);
+                startActivityForResult(intent, 0);
                 break;
             case R.id.btn_update_location:
                 break;
@@ -172,6 +179,15 @@ public class TicketDetailActivity extends AppCompatActivity implements View.OnCl
                 if(atm.getAddress()!=null && !atm.getAddress().equals("")) tv_address.setText(atm.getAddress());
                 else tv_address.setText(getResources().getString(R.string.unknown_place));
             }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode==1){
+            setResult(1);
+            finish();
         }
     }
 }

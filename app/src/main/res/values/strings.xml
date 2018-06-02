@@ -41,4 +41,13 @@
     <string name="no_internet_connection">No Internet Connection</string>
     <string name="no_internet_connection_toast">You don\'t have any internet connection</string>
     <string name="check_permission">Please enable any application permission on settings</string>
+    <string-array name="status_array">
+        <item>Closed</item>
+        <item>Not Closed</item>
+    </string-array>
+    <string name="status_label" translatable="false">Status</string>
+    <string name="feedback_label">Feedback</string>
+    <string name="feedback_hint">Give a feedback here...</string>
+    <string name="submit_label">Submit</string>
+    <string name="cancel_label">Cancel</string>
 </resources>
