@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -23,6 +24,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.swg.jalinatm.POJO.ATM;
 import com.swg.jalinatm.POJO.Ticket;
+import com.swg.jalinatm.POJO.Vendor;
+import com.swg.jalinatm.Utils.InternetCheck;
 
 import org.parceler.Parcels;
 
@@ -68,6 +71,8 @@ public class TicketDetailActivity extends AppCompatActivity implements View.OnCl
 
     private Ticket ticket;
     private ATM atm;
+    private Vendor vendor;
+    private int triggerButton = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +97,16 @@ public class TicketDetailActivity extends AppCompatActivity implements View.OnCl
 //        notes_layout.setBackground(getDrawable(R.drawable.rounded_layout));
         location_layout.setBackground(getDrawable(R.drawable.rounded_layout));
 
+        vendor = (Vendor) Parcels.unwrap(getIntent().getParcelableExtra("vendor"));
+        if(vendor==null){
+            Log.e(TAG, "error vendor null");
+            finish();
+        }
         atm = (ATM) Parcels.unwrap(getIntent().getParcelableExtra("atm"));
+        if(atm==null){
+            Log.e(TAG, "error atm null");
+            finish();
+        }
         ticket = (Ticket) Parcels.unwrap(getIntent().getParcelableExtra("ticket"));
         if(ticket != null){
             tv_ticket.setText(ticket.getTicketNumber());
@@ -115,6 +129,7 @@ public class TicketDetailActivity extends AppCompatActivity implements View.OnCl
                 gap.setVisibility(View.GONE);
             }
         } else {
+            Log.e(TAG, "error ticket null");
             finish();
         }
     }
@@ -140,20 +155,36 @@ public class TicketDetailActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.btn_accept:
-                Log.i(TAG, "btn_accept pressed");
-                setAlertDialog(getResources().getString(R.string.accept_alert_title), getResources().getString(R.string.accept_alert_body));
-                break;
-            case R.id.btn_finish:
-                Intent intent = new Intent(TicketDetailActivity.this, FeedbackActivity.class);
-//                            Bundle bundle = new Bundle();
-//                            bundle.putParcelable("atm", Parcels.wrap(atmList.get(position)));
-//                            intent.putExtras(bundle);
-                startActivityForResult(intent, 0);
-                break;
-            case R.id.btn_update_location:
-                break;
+        if(triggerButton==0) {
+            triggerButton=1;
+            new InternetCheck(internet -> {
+                if (internet) {
+                    switch (v.getId()) {
+                        case R.id.btn_accept:
+                            triggerButton=0;
+                            setAlertDialog(getResources().getString(R.string.accept_alert_title), getResources().getString(R.string.accept_alert_body));
+                            break;
+                        case R.id.btn_finish:
+                            triggerButton=0;
+                            Intent intent = new Intent(TicketDetailActivity.this, FeedbackActivity.class);
+                            Bundle bundle = new Bundle();
+                            bundle.putParcelable("vendor", Parcels.wrap(vendor));
+                            intent.putExtras(bundle);
+                            startActivityForResult(intent, 0);
+                            break;
+                        case R.id.btn_update_location:
+                            triggerButton=0;
+                            break;
+                    }
+                } else {
+                    triggerButton=0;
+                    Log.e(TAG, getResources().getString(R.string.no_internet_connection));
+                    Toast.makeText(this, getResources().getString(R.string.no_internet_connection_toast), Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            Toast.makeText(this, getResources().getString(R.string.please_wait), Toast.LENGTH_LONG).show();
+            Log.e(TAG, "user touch more than once");
         }
     }
 

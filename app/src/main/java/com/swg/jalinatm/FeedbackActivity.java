@@ -10,6 +10,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.Toast;
+
+import com.swg.jalinatm.POJO.Vendor;
+import com.swg.jalinatm.Utils.InternetCheck;
+import com.swg.jalinatm.Utils.Tracker;
+
+import org.parceler.Parcels;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -30,6 +37,9 @@ public class FeedbackActivity extends Activity implements AdapterView.OnItemSele
     private int statusSelected;
     private String statusValueSelected;
     private String feedback;
+    private Tracker tracker;
+    private Vendor vendor;
+    private int triggerButton = 0;
 
     private static final String TAG = "FeedbackActivity";
 
@@ -48,6 +58,15 @@ public class FeedbackActivity extends Activity implements AdapterView.OnItemSele
         status_spinner.setOnItemSelectedListener(this);
         submit_button.setOnClickListener(this);
         cancel_button.setOnClickListener(this);
+
+        vendor = (Vendor) Parcels.unwrap(getIntent().getParcelableExtra("vendor"));
+        if(vendor==null){
+            Log.e(TAG, "error vendor null");
+            finish();
+        }
+
+        tracker = new Tracker(this, vendor);
+        if(!tracker.isGoogleApiConnected()) tracker.connectGoogleApi();
     }
 
     @Override
@@ -65,17 +84,68 @@ public class FeedbackActivity extends Activity implements AdapterView.OnItemSele
 
     @Override
     public void onClick(View v) {
-        switch(v.getId()){
-            case R.id.submit_button:
-                if(et_feedback.getText() == null) feedback = "";
-                feedback = et_feedback.getText().toString();
-                Log.e(TAG, statusSelected + " " + statusValueSelected + " " + feedback);
-                setResult(1);
-                finish();
-                break;
-            case R.id.cancel_button:
-                finish();
-                break;
+        if(triggerButton==0) {
+            triggerButton=1;
+            new InternetCheck(internet -> {
+                if (internet) {
+                    switch (v.getId()) {
+                        case R.id.submit_button:
+                            triggerButton=0;
+                            if (et_feedback.getText() == null) feedback = "";
+                            feedback = et_feedback.getText().toString();
+                            Log.i(TAG, statusSelected + " " + statusValueSelected + " " + feedback + " " + vendor.getLoc().latitude + " " + vendor.getLoc().longitude);
+                            setResult(1);
+                            finish();
+                            break;
+                        case R.id.cancel_button:
+                            triggerButton=0;
+                            finish();
+                            break;
+                    }
+                } else {
+                    triggerButton=0;
+                    Log.e(TAG, getResources().getString(R.string.no_internet_connection));
+                    Toast.makeText(this, getResources().getString(R.string.no_internet_connection_toast), Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            Toast.makeText(this, getResources().getString(R.string.please_wait), Toast.LENGTH_LONG).show();
+            Log.e(TAG, "user touch more than once");
+        }
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.i(TAG, "Start state");
+        if(tracker!=null) {
+            if(!tracker.isGoogleApiConnected()) tracker.connectGoogleApi();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.e(TAG, "Stop state");
+        if(tracker.isGoogleApiConnected()) tracker.disconnectGoogleApi();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.i(TAG, "Pause state");
+        if(tracker!=null) {
+            tracker.stopLocationUpdate();
+        }
+    }
+    //
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.i(TAG, "Resume state");
+        if(tracker!=null) {
+            if (tracker.isGoogleApiConnected()) tracker.startLocationUpdate();
         }
     }
 }

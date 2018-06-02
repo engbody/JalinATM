@@ -1,13 +1,14 @@
 package com.swg.jalinatm.POJO;
 
-import android.location.Location;
-
 import com.google.android.gms.maps.model.LatLng;
+
+import org.parceler.Parcel;
 
 /**
  * Created by Andrew Widjaja on 5/28/2018.
  */
 
+@Parcel
 public class Vendor {
 
     private String id;
@@ -17,6 +18,8 @@ public class Vendor {
     private LatLng loc;
     private LatLng prevLoc;
     private Long lastUpdateTime;
+
+    public Vendor(){}
 
     public Vendor(String id, String name, String org) {
         this.id = id;

@@ -39,4 +39,5 @@
     <string name="feedback_hint">Berikan umpan balik disini...</string>
     <string name="submit_label">Berikan</string>
     <string name="cancel_label">Batal</string>
+    <string name="please_wait">Mohon menunggu</string>
 </resources>

@@ -63,6 +63,8 @@ public class HomeActivity extends AppCompatActivity {
 
     private Tracker tracker;
     private Vendor vendor;
+    private int triggerTouchItem = 0;
+    private int triggerTouchMenu = 0;
 
     private final static String TAG = "HomeActivity";
 
@@ -73,7 +75,7 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
 
-        Log.e(TAG, "MAPS_API_KEY: " + getResources().getString(R.string.MAPS_API_KEY));
+        Log.i(TAG, "MAPS_API_KEY: " + getResources().getString(R.string.MAPS_API_KEY));
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -95,29 +97,38 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         list_tickets.setOnItemClickListener((parent, view, position, id) -> {
-            if(parent.getItemAtPosition(position)!=null) {
-                if(tracker!=null){
-                    if(vendor.getLoc()!=null) Log.e(TAG, "getLatitude: " + vendor.getLoc().latitude + " getLongitude: " + vendor.getLoc().longitude);
-                }
-                Ticket ticket = (Ticket) parent.getItemAtPosition(position);
-                Log.i(TAG, "Ticket no: " + ticket.getTicketNumber());
-
-                ATM atmTicket = new ATM();
-                for (ATM atm : atmList) {
-                    if (atm.getId().equals(ticket.getMachineNumber())) {
-                        atmTicket = atm;
-                        break;
+            if(triggerTouchItem==0) {
+                triggerTouchItem = 1;
+                if (parent.getItemAtPosition(position) != null) {
+                    if (tracker != null) {
+                        if (vendor.getLoc() != null)
+                            Log.i(TAG, "getLatitude: " + vendor.getLoc().latitude + " getLongitude: " + vendor.getLoc().longitude);
                     }
-                }
+                    Ticket ticket = (Ticket) parent.getItemAtPosition(position);
+                    Log.i(TAG, "Ticket no: " + ticket.getTicketNumber());
 
-                Intent intent = new Intent(HomeActivity.this, TicketDetailActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putParcelable("ticket", Parcels.wrap(ticket));
-                bundle.putParcelable("atm", Parcels.wrap(atmTicket));
-                intent.putExtras(bundle);
+                    ATM atmTicket = new ATM();
+                    for (ATM atm : atmList) {
+                        if (atm.getId().equals(ticket.getMachineNumber())) {
+                            atmTicket = atm;
+                            break;
+                        }
+                    }
+
+                    triggerTouchItem = 0;
+                    Intent intent = new Intent(HomeActivity.this, TicketDetailActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable("ticket", Parcels.wrap(ticket));
+                    bundle.putParcelable("atm", Parcels.wrap(atmTicket));
+                    bundle.putParcelable("vendor", Parcels.wrap(vendor));
+                    intent.putExtras(bundle);
 //                intent.putExtra("ticket", Parcels.wrap(ticket));
 //                intent.putExtra("atm", Parcels.wrap(atmTicket));
-                startActivityForResult(intent, 0);
+                    startActivityForResult(intent, 0);
+                }
+            } else {
+                Toast.makeText(this, getResources().getString(R.string.please_wait), Toast.LENGTH_LONG).show();
+                Log.e(TAG, "user touch more than once");
             }
         });
 
@@ -125,17 +136,28 @@ public class HomeActivity extends AppCompatActivity {
 
         nav_view.setNavigationItemSelectedListener(item -> {
             item.setCheckable(false);
-            switch (item.getItemId()) {
-                case R.id.nav_update_location_atm:
-                    Intent intent = new Intent(HomeActivity.this, ATMListActivity.class);
-                    startActivity(intent);
-                    break;
-                case R.id.nav_log_out:
-                    Preferences.deleteKey(getApplicationContext(), "login");
-                    Intent intent_login = new Intent(HomeActivity.this, LoginActivity.class);
-                    startActivity(intent_login);
-                    finish();
-                    break;
+            if(triggerTouchMenu==0) {
+                triggerTouchMenu = 1;
+                switch (item.getItemId()) {
+                    case R.id.nav_update_location_atm:
+                        triggerTouchMenu = 0;
+                        Intent intent = new Intent(HomeActivity.this, ATMListActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelable("vendor", Parcels.wrap(vendor));
+                        intent.putExtras(bundle);
+                        startActivity(intent);
+                        break;
+                    case R.id.nav_log_out:
+                        triggerTouchMenu = 0;
+                        Preferences.deleteKey(getApplicationContext(), "login");
+                        Intent intent_login = new Intent(HomeActivity.this, LoginActivity.class);
+                        startActivity(intent_login);
+                        finish();
+                        break;
+                }
+            } else {
+                Toast.makeText(this, getResources().getString(R.string.please_wait), Toast.LENGTH_LONG).show();
+                Log.e(TAG, "user touch more than once");
             }
             drawerLayout.closeDrawers();
             return true;
@@ -234,14 +256,21 @@ public class HomeActivity extends AppCompatActivity {
                 drawerLayout.openDrawer(GravityCompat.START);
                 return true;
             case R.id.action_refresh:
-                setVisibilityLoading();
-                new InternetCheck(internet -> {
-                    if(internet) {
-                        reloadDataandView();
-                    } else {
-                        setVisibilityNoInternet();
-                    }
-                });
+                if(triggerTouchMenu==0) {
+                    triggerTouchMenu=1;
+                    setVisibilityLoading();
+                    new InternetCheck(internet -> {
+                        if (internet) {
+                            reloadDataandView();
+                        } else {
+                            setVisibilityNoInternet();
+                        }
+                        triggerTouchMenu=0;
+                    });
+                } else {
+                    Toast.makeText(this, getResources().getString(R.string.please_wait), Toast.LENGTH_LONG).show();
+                    Log.e(TAG, "user touch more than once");
+                }
                 return true;
         }
         return super.onOptionsItemSelected(item);

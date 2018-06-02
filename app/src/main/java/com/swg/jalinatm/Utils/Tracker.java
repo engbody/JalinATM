@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -41,7 +42,8 @@ public class Tracker implements LocationListener, GoogleApiClient.ConnectionCall
         this.locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
-    public Tracker(){}
+    public Tracker() {
+    }
 
     public Tracker(Context context, Vendor vendor) {
         this.context = context;
@@ -58,21 +60,21 @@ public class Tracker implements LocationListener, GoogleApiClient.ConnectionCall
         Log.i(TAG, "Location update started");
     }
 
-    public void stopLocationUpdate(){
+    public void stopLocationUpdate() {
         LocationServices.FusedLocationApi.removeLocationUpdates(googleClient, this);
         Log.i(TAG, "Location update stopped");
     }
 
-    public void connectGoogleApi(){
+    public void connectGoogleApi() {
         googleClient.connect();
     }
 
-    public void disconnectGoogleApi(){
+    public void disconnectGoogleApi() {
         googleClient.disconnect();
     }
 
-    public boolean isGoogleApiConnected(){
-        return googleClient!=null && googleClient.isConnected();
+    public boolean isGoogleApiConnected() {
+        return googleClient != null && googleClient.isConnected();
     }
 
     @Override

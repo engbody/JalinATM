@@ -22,7 +22,7 @@ import android.widget.Toast;
 import com.google.android.gms.maps.model.LatLng;
 import com.swg.jalinatm.Adapter.ATMListAdapter;
 import com.swg.jalinatm.POJO.ATM;
-import com.swg.jalinatm.POJO.DataWrapper;
+import com.swg.jalinatm.POJO.Vendor;
 import com.swg.jalinatm.Utils.InternetCheck;
 
 import org.parceler.Parcels;
@@ -48,9 +48,10 @@ public class ATMListActivity extends AppCompatActivity implements View.OnClickLi
     @BindView(R.id.root_layout)
     LinearLayout root_layout;
 
-    ArrayList<ATM> atmList;
-    DataWrapper wrapper;
-    ATMListAdapter adapter;
+    private ArrayList<ATM> atmList;
+    private ATMListAdapter adapter;
+    private Vendor vendor;
+    private int triggerTouchMenu = 0;
 
     private final static String TAG = "ATMListActivity";
 
@@ -63,6 +64,12 @@ public class ATMListActivity extends AppCompatActivity implements View.OnClickLi
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        vendor = (Vendor) Parcels.unwrap(getIntent().getParcelableExtra("vendor"));
+        if(vendor== null){
+            Log.e(TAG, "error vendor is null");
+            finish();
+        }
 
         new InternetCheck(internet -> {
             Log.e(TAG, String.valueOf(internet));
@@ -77,6 +84,7 @@ public class ATMListActivity extends AppCompatActivity implements View.OnClickLi
             Intent intent = new Intent(ATMListActivity.this, ATMDetailActivity.class);
             Bundle bundle = new Bundle();
             bundle.putParcelable("atm", Parcels.wrap(atmList.get(position)));
+            bundle.putParcelable("vendor", Parcels.wrap(vendor));
             intent.putExtras(bundle);
             startActivity(intent);
         });
@@ -158,14 +166,21 @@ public class ATMListActivity extends AppCompatActivity implements View.OnClickLi
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_refresh:
-                setVisibilityLoading();
-                new InternetCheck(internet -> {
-                    if(internet) {
-                        reloadData();
-                    } else {
-                        setVisibilityNoInternet();
-                    }
-                });
+                if(triggerTouchMenu==0) {
+                    triggerTouchMenu=1;
+                    setVisibilityLoading();
+                    new InternetCheck(internet -> {
+                        if (internet) {
+                            reloadData();
+                        } else {
+                            setVisibilityNoInternet();
+                        }
+                        triggerTouchMenu=0;
+                    });
+                } else {
+                    Toast.makeText(this, getResources().getString(R.string.please_wait), Toast.LENGTH_LONG).show();
+                    Log.e(TAG, "user touch more than once");
+                }
                 return true;
             case android.R.id.home:
                 finish();
