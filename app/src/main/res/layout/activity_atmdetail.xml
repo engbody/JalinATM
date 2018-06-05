@@ -111,6 +111,40 @@
                         android:textSize="18sp"/>
                 </LinearLayout>
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:weightSum="100"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="40"
+                        android:text="@string/atm_balance"
+                        android:layout_gravity="center_vertical"
+                        android:textSize="18sp"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="10"
+                        android:gravity="center"
+                        android:text=":"
+                        android:textSize="18sp"/>
+
+                    <TextView
+                        android:id="@+id/tv_atmbalance"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="50"
+                        android:textSize="18sp"/>
+                </LinearLayout>
+
             </LinearLayout>
 
             <LinearLayout
@@ -171,16 +205,37 @@
                         android:layout_height="300dp"
                         android:layout_gravity="center"/>-->
 
-                    <android.support.v7.widget.AppCompatButton
-                        android:id="@+id/btn_update_location"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:padding="12dp"
-                        android:layout_marginTop="10dp"
-                        android:background="@drawable/rounded_layout_without_stroke_blue"
-                        android:textColor="@color/white"
-                        android:text="@string/update_location"/>
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:weightSum="100">
+                        <android.support.v7.widget.AppCompatButton
+                            android:id="@+id/btn_open_location"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_weight="45"
+                            android:background="@drawable/rounded_layout_without_stroke_blue"
+                            android:textColor="@color/white"
+                            android:text="@string/open_maps"/>
+                        <View
+                            android:layout_width="0dp"
+                            android:id="@+id/gap_location"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="10"/>
+                        <android.support.v7.widget.AppCompatButton
+                            android:id="@+id/btn_update_location"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_weight="45"
+                            android:background="@drawable/rounded_layout_without_stroke_blue"
+                            android:textColor="@color/white"
+                            android:text="@string/update_location"/>
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
 

@@ -86,28 +86,28 @@ public class FeedbackActivity extends Activity implements AdapterView.OnItemSele
     public void onClick(View v) {
         if(triggerButton==0) {
             triggerButton=1;
-            new InternetCheck(internet -> {
-                if (internet) {
-                    switch (v.getId()) {
-                        case R.id.submit_button:
+            switch (v.getId()) {
+                case R.id.submit_button:
+                    new InternetCheck(internet -> {
+                        if (internet) {
                             triggerButton=0;
                             if (et_feedback.getText() == null) feedback = "";
                             feedback = et_feedback.getText().toString();
                             Log.i(TAG, statusSelected + " " + statusValueSelected + " " + feedback + " " + vendor.getLoc().latitude + " " + vendor.getLoc().longitude);
                             setResult(1);
                             finish();
-                            break;
-                        case R.id.cancel_button:
+                        } else {
                             triggerButton=0;
-                            finish();
-                            break;
-                    }
-                } else {
+                            Log.e(TAG, getResources().getString(R.string.no_internet_connection));
+                            Toast.makeText(this, getResources().getString(R.string.no_internet_connection_toast), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    break;
+                case R.id.cancel_button:
                     triggerButton=0;
-                    Log.e(TAG, getResources().getString(R.string.no_internet_connection));
-                    Toast.makeText(this, getResources().getString(R.string.no_internet_connection_toast), Toast.LENGTH_SHORT).show();
-                }
-            });
+                    finish();
+                    break;
+            }
         } else {
             Toast.makeText(this, getResources().getString(R.string.please_wait), Toast.LENGTH_LONG).show();
             Log.e(TAG, "user touch more than once");
@@ -119,33 +119,27 @@ public class FeedbackActivity extends Activity implements AdapterView.OnItemSele
     protected void onStart() {
         super.onStart();
         Log.i(TAG, "Start state");
-        if(tracker!=null) {
-            if(!tracker.isGoogleApiConnected()) tracker.connectGoogleApi();
-        }
+        if(tracker!=null && !tracker.isGoogleApiConnected()) tracker.connectGoogleApi();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         Log.e(TAG, "Stop state");
-        if(tracker.isGoogleApiConnected()) tracker.disconnectGoogleApi();
+        if(tracker!=null && tracker.isGoogleApiConnected()) tracker.disconnectGoogleApi();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         Log.i(TAG, "Pause state");
-        if(tracker!=null) {
-            tracker.stopLocationUpdate();
-        }
+        if(tracker!=null && tracker.isGoogleApiConnected()) tracker.stopLocationUpdate();
     }
-    //
+
     @Override
     protected void onResume() {
         super.onResume();
         Log.i(TAG, "Resume state");
-        if(tracker!=null) {
-            if (tracker.isGoogleApiConnected()) tracker.startLocationUpdate();
-        }
+        if(tracker!=null && tracker.isGoogleApiConnected()) tracker.startLocationUpdate();
     }
 }

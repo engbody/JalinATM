@@ -86,7 +86,7 @@ public class ATMListActivity extends AppCompatActivity implements View.OnClickLi
             bundle.putParcelable("atm", Parcels.wrap(atmList.get(position)));
             bundle.putParcelable("vendor", Parcels.wrap(vendor));
             intent.putExtras(bundle);
-            startActivity(intent);
+            startActivityForResult(intent, 0);
         });
     }
 
@@ -97,7 +97,7 @@ public class ATMListActivity extends AppCompatActivity implements View.OnClickLi
         atmList.add(new ATM("ATM3", "Di dalam gedung Mall Kelapa Gading", null, new LatLng(-6.157519, 106.90802080000003)));
         atmList.add(new ATM("ATM4", "Di dalam gedung Universitas Bina Nusantara Anggrek", null, new LatLng(-6.2018064, 106.78159240000002)));
 
-        Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+        Geocoder geocoder = new Geocoder(getApplicationContext(), getResources().getConfiguration().locale);
         for (ATM atm : atmList) {
             try {
                 List<Address> addresses = geocoder.getFromLocation(atm.getLoc().latitude, atm.getLoc().longitude, 1);
@@ -187,5 +187,14 @@ public class ATMListActivity extends AppCompatActivity implements View.OnClickLi
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode==1){
+            setVisibilityLoading();
+            reloadData();
+        }
     }
 }

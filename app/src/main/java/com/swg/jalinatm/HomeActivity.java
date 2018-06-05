@@ -179,7 +179,7 @@ public class HomeActivity extends AppCompatActivity {
         ticketListAdapter = new TicketListAdapter(this, ticketList);
         list_tickets.setAdapter(ticketListAdapter);
 
-        Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+        Geocoder geocoder = new Geocoder(getApplicationContext(), getResources().getConfiguration().locale);
         for (ATM atm : atmList) {
             try {
                 List<Address> addresses = geocoder.getFromLocation(atm.getLoc().latitude, atm.getLoc().longitude, 1);
@@ -288,40 +288,28 @@ public class HomeActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         Log.i(TAG, "Start state");
-        if(tracker!=null) {
-            if(!tracker.isGoogleApiConnected()) tracker.connectGoogleApi();
-        }
+        if(tracker!=null && !tracker.isGoogleApiConnected()) tracker.connectGoogleApi();
     }
-//
+
     @Override
     protected void onStop() {
         super.onStop();
         Log.e(TAG, "Stop state");
-        if(tracker.isGoogleApiConnected()) tracker.disconnectGoogleApi();
+        if(tracker!=null && tracker.isGoogleApiConnected()) tracker.disconnectGoogleApi();
     }
-//
-//    @Override
-//    protected void onDestroy() {
-//        super.onDestroy();
-//        Log.e(TAG, "Destroy state");
-//    }
-//
+
     @Override
     protected void onPause() {
         super.onPause();
         Log.i(TAG, "Pause state");
-        if(tracker!=null) {
-            tracker.stopLocationUpdate();
-        }
+        if(tracker!=null && tracker.isGoogleApiConnected()) tracker.stopLocationUpdate();
     }
-//
+
     @Override
     protected void onResume() {
         super.onResume();
         Log.i(TAG, "Resume state");
-        if(tracker!=null) {
-            if (tracker.isGoogleApiConnected()) tracker.startLocationUpdate();
-        }
+        if(tracker!=null && tracker.isGoogleApiConnected()) tracker.startLocationUpdate();
     }
 
     @Override

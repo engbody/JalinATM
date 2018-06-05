@@ -18,6 +18,7 @@ import com.swg.jalinatm.Utils.Preferences;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        String locale = getResources().getConfiguration().locale.getCountry();
+        Log.i(TAG, "locale: " + locale + " default: " + Locale.getDefault());
 
         if(Build.VERSION.SDK_INT >= 23) {
             if(checkPermissions(this)){

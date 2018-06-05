@@ -77,6 +77,10 @@ public class Tracker implements LocationListener, GoogleApiClient.ConnectionCall
         return googleClient != null && googleClient.isConnected();
     }
 
+    public Vendor getVendor(){
+        return this.vendor;
+    }
+
     @Override
     public void onLocationChanged(Location location) {
         Log.i(TAG, "Location changed");
@@ -88,6 +92,7 @@ public class Tracker implements LocationListener, GoogleApiClient.ConnectionCall
                 this.location = location;
                 vendor.setLoc(new LatLng(this.location.getLatitude(), this.location.getLongitude()));
             }
+            vendor.setLastUpdateTime(System.currentTimeMillis());
         }
     }
 

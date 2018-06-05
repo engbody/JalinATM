@@ -40,4 +40,7 @@
     <string name="submit_label">Berikan</string>
     <string name="cancel_label">Batal</string>
     <string name="please_wait">Mohon menunggu</string>
+    <string name="failed_to_open_place">Gagal membuka peta</string>
+    <string name="atm_balance">Saldo ATM</string>
+    <string name="open_maps">Buka di peta</string>
 </resources>

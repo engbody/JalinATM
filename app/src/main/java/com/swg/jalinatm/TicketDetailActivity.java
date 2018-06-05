@@ -2,6 +2,7 @@ package com.swg.jalinatm;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,6 +16,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -26,8 +31,11 @@ import com.swg.jalinatm.POJO.ATM;
 import com.swg.jalinatm.POJO.Ticket;
 import com.swg.jalinatm.POJO.Vendor;
 import com.swg.jalinatm.Utils.InternetCheck;
+import com.swg.jalinatm.Utils.Tracker;
 
 import org.parceler.Parcels;
+
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -58,6 +66,8 @@ public class TicketDetailActivity extends AppCompatActivity implements View.OnCl
     Button btn_finish;
     @BindView(R.id.btn_update_location)
     Button btn_update_location;
+    @BindView(R.id.btn_open_location)
+    Button btn_open_location;
     @BindView(R.id.gap)
     View gap;
     @BindView(R.id.layout_accept_finish)
@@ -66,12 +76,14 @@ public class TicketDetailActivity extends AppCompatActivity implements View.OnCl
     LinearLayout root_layout;
 
     private final static String TAG = "TicketDetailActivity";
+    private final static int PLACE_PICKER_REQUEST = 5;
 
     private AlertDialog alertDialog;
 
     private Ticket ticket;
     private ATM atm;
     private Vendor vendor;
+    private Tracker tracker;
     private int triggerButton = 0;
 
     @Override
@@ -89,6 +101,7 @@ public class TicketDetailActivity extends AppCompatActivity implements View.OnCl
         btn_accept.setOnClickListener(this);
         btn_finish.setOnClickListener(this);
         btn_update_location.setOnClickListener(this);
+        btn_open_location.setOnClickListener(this);
         mapFragment.getMapAsync(this);
 
         alertDialog = new AlertDialog.Builder(TicketDetailActivity.this).create();
@@ -107,6 +120,7 @@ public class TicketDetailActivity extends AppCompatActivity implements View.OnCl
             Log.e(TAG, "error atm null");
             finish();
         }
+        Log.e(TAG, "atmid: " + atm.getId());
         ticket = (Ticket) Parcels.unwrap(getIntent().getParcelableExtra("ticket"));
         if(ticket != null){
             tv_ticket.setText(ticket.getTicketNumber());
@@ -128,10 +142,13 @@ public class TicketDetailActivity extends AppCompatActivity implements View.OnCl
                 btn_finish.setVisibility(View.GONE);
                 gap.setVisibility(View.GONE);
             }
+            tracker = new Tracker(this, vendor);
+            if(!tracker.isGoogleApiConnected()) tracker.connectGoogleApi();
         } else {
             Log.e(TAG, "error ticket null");
             finish();
         }
+
     }
 
     private void setAlertDialog(String title, String body){
@@ -157,31 +174,50 @@ public class TicketDetailActivity extends AppCompatActivity implements View.OnCl
     public void onClick(View v) {
         if(triggerButton==0) {
             triggerButton=1;
-            new InternetCheck(internet -> {
-                if (internet) {
-                    switch (v.getId()) {
-                        case R.id.btn_accept:
-                            triggerButton=0;
-                            setAlertDialog(getResources().getString(R.string.accept_alert_title), getResources().getString(R.string.accept_alert_body));
-                            break;
-                        case R.id.btn_finish:
-                            triggerButton=0;
-                            Intent intent = new Intent(TicketDetailActivity.this, FeedbackActivity.class);
-                            Bundle bundle = new Bundle();
-                            bundle.putParcelable("vendor", Parcels.wrap(vendor));
-                            intent.putExtras(bundle);
-                            startActivityForResult(intent, 0);
-                            break;
-                        case R.id.btn_update_location:
-                            triggerButton=0;
-                            break;
-                    }
-                } else {
+            switch (v.getId()) {
+                case R.id.btn_accept:
                     triggerButton=0;
-                    Log.e(TAG, getResources().getString(R.string.no_internet_connection));
-                    Toast.makeText(this, getResources().getString(R.string.no_internet_connection_toast), Toast.LENGTH_SHORT).show();
-                }
-            });
+                    setAlertDialog(getResources().getString(R.string.accept_alert_title), getResources().getString(R.string.accept_alert_body));
+                    break;
+                case R.id.btn_finish:
+                    triggerButton=0;
+                    Intent intent = new Intent(TicketDetailActivity.this, FeedbackActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable("vendor", Parcels.wrap(vendor));
+                    intent.putExtras(bundle);
+                    startActivityForResult(intent, 0);
+                    break;
+                case R.id.btn_update_location:
+                    new InternetCheck(internet -> {
+                        if (internet) {
+                            PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+                            try {
+                                startActivityForResult(builder.build(this), PLACE_PICKER_REQUEST);
+                            } catch (GooglePlayServicesRepairableException e) {
+                                e.printStackTrace();
+                                Log.e(TAG, getResources().getString(R.string.failed_to_open_place) + " cause" + e.getCause());
+                                Toast.makeText(this, getResources().getString(R.string.failed_to_open_place), Toast.LENGTH_LONG).show();
+                            } catch (GooglePlayServicesNotAvailableException e) {
+                                e.printStackTrace();
+                                Log.e(TAG, getResources().getString(R.string.failed_to_open_place) + " cause" + e.getCause());
+                                Toast.makeText(this, getResources().getString(R.string.failed_to_open_place), Toast.LENGTH_LONG).show();
+                            }
+                            triggerButton=0;
+                        } else {
+                            triggerButton=0;
+                            Log.e(TAG, getResources().getString(R.string.no_internet_connection));
+                            Toast.makeText(this, getResources().getString(R.string.no_internet_connection_toast), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    break;
+                case R.id.btn_open_location:
+                    triggerButton=0;
+                    String uri = String.format(Locale.US, "geo:%f,%f?q=%f,%f", atm.getLoc().latitude, atm.getLoc().longitude, atm.getLoc().latitude, atm.getLoc().longitude);
+                    Log.e(TAG, uri);
+                    Intent intentMaps = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                    startActivity(intentMaps);
+                    break;
+            }
         } else {
             Toast.makeText(this, getResources().getString(R.string.please_wait), Toast.LENGTH_LONG).show();
             Log.e(TAG, "user touch more than once");
@@ -219,6 +255,44 @@ public class TicketDetailActivity extends AppCompatActivity implements View.OnCl
         if(resultCode==1){
             setResult(1);
             finish();
+        } else if (requestCode == PLACE_PICKER_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                Place place = PlacePicker.getPlace(this, data);
+                String toastMsg = String.format("Address: %s", place.getAddress() + " Vendor Location Latitude: " + tracker.getVendor().getLoc().latitude);
+                Log.e(TAG, "device location: " + tracker.getVendor().getLoc().latitude + " " + tracker.getVendor().getLoc().longitude);
+                Log.e(TAG, "place location: " + place.getLatLng().latitude + " " + place.getLatLng().longitude);
+                Toast.makeText(this, toastMsg, Toast.LENGTH_LONG).show();
+                setResult(1);
+                finish();
+            }
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.i(TAG, "Start state");
+        if(tracker!=null && !tracker.isGoogleApiConnected()) tracker.connectGoogleApi();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.e(TAG, "Stop state");
+        if(tracker!=null && tracker.isGoogleApiConnected()) tracker.disconnectGoogleApi();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.i(TAG, "Pause state");
+        if(tracker!=null && tracker.isGoogleApiConnected()) tracker.stopLocationUpdate();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.i(TAG, "Resume state");
+        if(tracker!=null && tracker.isGoogleApiConnected()) tracker.startLocationUpdate();
     }
 }
