@@ -62,16 +62,16 @@ public class TicketDetailActivity extends AppCompatActivity implements View.OnCl
     TextView tv_summary;
     @BindView(R.id.btn_accept)
     Button btn_accept;
-    @BindView(R.id.btn_finish)
-    Button btn_finish;
-    @BindView(R.id.btn_update_location)
-    Button btn_update_location;
+    @BindView(R.id.btn_reject_finish)
+    Button btn_reject_finish;
+//    @BindView(R.id.btn_update_location)
+//    Button btn_update_location;
     @BindView(R.id.btn_open_location)
     Button btn_open_location;
     @BindView(R.id.gap)
     View gap;
-    @BindView(R.id.layout_accept_finish)
-    LinearLayout layout_accept_finish;
+    @BindView(R.id.layout_accept_reject_finish)
+    LinearLayout layout_accept_reject_finish;
     @BindView(R.id.root_layout)
     LinearLayout root_layout;
 
@@ -85,6 +85,7 @@ public class TicketDetailActivity extends AppCompatActivity implements View.OnCl
     private Vendor vendor;
     private Tracker tracker;
     private int triggerButton = 0;
+    private int reject = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,8 +100,8 @@ public class TicketDetailActivity extends AppCompatActivity implements View.OnCl
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         btn_accept.setOnClickListener(this);
-        btn_finish.setOnClickListener(this);
-        btn_update_location.setOnClickListener(this);
+        btn_reject_finish.setOnClickListener(this);
+//        btn_update_location.setOnClickListener(this);
         btn_open_location.setOnClickListener(this);
         mapFragment.getMapAsync(this);
 
@@ -121,6 +122,7 @@ public class TicketDetailActivity extends AppCompatActivity implements View.OnCl
             finish();
         }
         Log.e(TAG, "atmid: " + atm.getId());
+        int ticketcheckint = (int) getIntent().getIntExtra("ticketcheck", -1);
         ticket = (Ticket) Parcels.unwrap(getIntent().getParcelableExtra("ticket"));
         if(ticket != null){
             tv_ticket.setText(ticket.getTicketNumber());
@@ -131,21 +133,30 @@ public class TicketDetailActivity extends AppCompatActivity implements View.OnCl
                 if (ticket.getTicketState().equals("1")) { //accepted
                     gap.setVisibility(View.GONE);
                     btn_accept.setVisibility(View.GONE);
-                    layout_accept_finish.setGravity(Gravity.CENTER);
+                    btn_reject_finish.setText(getResources().getString(R.string.finish));
+                    layout_accept_reject_finish.setGravity(Gravity.CENTER);
                 } else {
-                    layout_accept_finish.setVisibility(View.GONE);
+                    layout_accept_reject_finish.setVisibility(View.GONE);
                 }
             } else {
-                layout_accept_finish.setVisibility(View.VISIBLE);
-                layout_accept_finish.setGravity(Gravity.CENTER);
-                btn_accept.setVisibility(View.VISIBLE);
-                btn_finish.setVisibility(View.GONE);
+                layout_accept_reject_finish.setVisibility(View.VISIBLE);
+                layout_accept_reject_finish.setGravity(Gravity.CENTER);
+                if(ticketcheckint==1) {
+                    btn_reject_finish.setVisibility(View.VISIBLE);
+                    btn_accept.setVisibility(View.GONE);
+                    btn_reject_finish.setText(getResources().getString(R.string.reject));
+                    reject = 1;
+                } else if(ticketcheckint==0){
+                    btn_reject_finish.setVisibility(View.GONE);
+                    btn_accept.setVisibility(View.VISIBLE);
+                }
                 gap.setVisibility(View.GONE);
             }
             tracker = new Tracker(this, vendor);
             if(!tracker.isGoogleApiConnected()) tracker.connectGoogleApi();
         } else {
             Log.e(TAG, "error ticket null");
+            setResult(1);
             finish();
         }
 
@@ -161,12 +172,7 @@ public class TicketDetailActivity extends AppCompatActivity implements View.OnCl
                     finish();
                 });
         alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, getResources().getString(R.string.alert_no_button),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
+                (dialog, which) -> dialog.dismiss());
         alertDialog.show();
     }
 
@@ -179,13 +185,17 @@ public class TicketDetailActivity extends AppCompatActivity implements View.OnCl
                     triggerButton=0;
                     setAlertDialog(getResources().getString(R.string.accept_alert_title), getResources().getString(R.string.accept_alert_body));
                     break;
-                case R.id.btn_finish:
+                case R.id.btn_reject_finish:
                     triggerButton=0;
-                    Intent intent = new Intent(TicketDetailActivity.this, FeedbackActivity.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putParcelable("vendor", Parcels.wrap(vendor));
-                    intent.putExtras(bundle);
-                    startActivityForResult(intent, 0);
+                    if(reject==0) {
+                        Intent intent = new Intent(TicketDetailActivity.this, FeedbackActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelable("vendor", Parcels.wrap(vendor));
+                        intent.putExtras(bundle);
+                        startActivityForResult(intent, 0);
+                    } else {
+                        setAlertDialog(getResources().getString(R.string.reject_alert_title), getResources().getString(R.string.reject_alert_body));
+                    }
                     break;
                 case R.id.btn_update_location:
                     new InternetCheck(internet -> {

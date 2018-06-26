@@ -54,4 +54,8 @@
     <string name="failed_to_open_place">Failed to open maps</string>
     <string name="atm_balance">ATM Balance</string>
     <string name="open_maps">Open in maps</string>
+    <string name="suspend">Suspend</string>
+    <string name="reject">Reject</string>
+    <string name="reject_alert_body">Are you sure to reject this ticket?</string>
+    <string name="reject_alert_title">Reject Ticket</string>
 </resources>

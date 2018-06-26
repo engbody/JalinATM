@@ -115,13 +115,25 @@ public class HomeActivity extends AppCompatActivity {
                         }
                     }
 
+                    int ticketcheckint = 0;
+                    for (Ticket ticketcheck : ticketList){
+                        if(ticketcheck.getTicketState()!=null){
+                            if(ticketcheck.getTicketState().equals("1")){
+                                ticketcheckint=1;
+                                break;
+                            }
+                        }
+                    }
+
                     triggerTouchItem = 0;
                     Intent intent = new Intent(HomeActivity.this, TicketDetailActivity.class);
                     Bundle bundle = new Bundle();
                     bundle.putParcelable("ticket", Parcels.wrap(ticket));
                     bundle.putParcelable("atm", Parcels.wrap(atmTicket));
                     bundle.putParcelable("vendor", Parcels.wrap(vendor));
+//                    bundle.putInt("ticketcheck", ticketcheckint);
                     intent.putExtras(bundle);
+                    intent.putExtra("ticketcheck", ticketcheckint);
 //                intent.putExtra("ticket", Parcels.wrap(ticket));
 //                intent.putExtra("atm", Parcels.wrap(atmTicket));
                     startActivityForResult(intent, 0);
@@ -139,14 +151,14 @@ public class HomeActivity extends AppCompatActivity {
             if(triggerTouchMenu==0) {
                 triggerTouchMenu = 1;
                 switch (item.getItemId()) {
-                    case R.id.nav_update_location_atm:
-                        triggerTouchMenu = 0;
-                        Intent intent = new Intent(HomeActivity.this, ATMListActivity.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putParcelable("vendor", Parcels.wrap(vendor));
-                        intent.putExtras(bundle);
-                        startActivity(intent);
-                        break;
+//                    case R.id.nav_update_location_atm:
+//                        triggerTouchMenu = 0;
+//                        Intent intent = new Intent(HomeActivity.this, ATMListActivity.class);
+//                        Bundle bundle = new Bundle();
+//                        bundle.putParcelable("vendor", Parcels.wrap(vendor));
+//                        intent.putExtras(bundle);
+//                        startActivity(intent);
+//                        break;
                     case R.id.nav_log_out:
                         triggerTouchMenu = 0;
                         Preferences.deleteKey(getApplicationContext(), "login");
@@ -169,8 +181,8 @@ public class HomeActivity extends AppCompatActivity {
         ticketList = new ArrayList<Ticket>();
         atmList = new ArrayList<ATM>();
         ticketList.add(new Ticket("#1", "Cash Handler Fatal Error", "ATM tidak mengeluarkan uang, dan tidak respond", "ATM1", null));
-        ticketList.add(new Ticket("#2", "Outstanding Down", "ATM tidak ada koneksi", "ATM2", "1")); //accepted
-        ticketList.add(new Ticket("#3", "Cash Out", "Uang di ATM habis", "ATM3", "2")); //finished
+        ticketList.add(new Ticket("#2", "Outstanding Down", "ATM tidak ada koneksi", "ATM2", null)); //accepted
+//        ticketList.add(new Ticket("#3", "Cash Out", "Uang di ATM habis", "ATM3", "2")); //rejected
         atmList.add(new ATM("ATM1", "Di dalam gedung Grand Indonesia", null, new LatLng(-6.1950034, 106.81978660000004)));
         atmList.add(new ATM("ATM2", "Di dalam gedung Epiwalk", null, new LatLng(-6.2182575, 106.83518779999997)));
         atmList.add(new ATM("ATM3", "Di dalam gedung Mall Kelapa Gading", null, new LatLng(-6.157519, 106.90802080000003)));

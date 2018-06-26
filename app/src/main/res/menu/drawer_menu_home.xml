@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <group android:checkableBehavior="single">
-        <item
+        <!--<item
             android:id="@+id/nav_update_location_atm"
             android:icon="@drawable/ic_action_name"
-            android:title="@string/update_location" />
+            android:title="@string/update_location" />-->
         <item
             android:id="@+id/nav_log_out"
             android:icon="@drawable/ic_logout_black"

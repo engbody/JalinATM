@@ -43,4 +43,8 @@
     <string name="failed_to_open_place">Gagal membuka peta</string>
     <string name="atm_balance">Saldo ATM</string>
     <string name="open_maps">Buka di peta</string>
+    <string name="suspend">Tunda</string>
+    <string name="reject">Tolak</string>
+    <string name="reject_alert_body">Apakah kamu yakin untuk menolak tiket ini?</string>
+    <string name="reject_alert_title">Tolak Tiket</string>
 </resources>
