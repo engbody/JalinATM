@@ -50,7 +50,7 @@
     <string name="feedback_hint">Give a feedback here...</string>
     <string name="submit_label">Submit</string>
     <string name="cancel_label">Cancel</string>
-    <string name="please_wait">Please wait</string>
+    <string name="please_wait">Please wait...</string>
     <string name="failed_to_open_place">Failed to open maps</string>
     <string name="atm_balance">ATM Balance</string>
     <string name="open_maps">Open in maps</string>
@@ -58,4 +58,6 @@
     <string name="reject">Reject</string>
     <string name="reject_alert_body">Are you sure to reject this ticket?</string>
     <string name="reject_alert_title">Reject Ticket</string>
+    <string name="login_failed">Login Failed</string>
+    <string name="login_successful">Login Successful</string>
 </resources>

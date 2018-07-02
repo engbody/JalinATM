@@ -2,6 +2,7 @@ package com.swg.jalinatm;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Application;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -13,6 +14,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.swg.jalinatm.Utils.InternetCheck;
 import com.swg.jalinatm.Utils.Preferences;
 
@@ -25,6 +30,9 @@ public class MainActivity extends AppCompatActivity {
     private static final int MULTIPLE_PERMISSIONS = 1;
     private static final String TAG = "MainActivity";
 
+    private FirebaseAuth mAuth;
+    private FirebaseUser currentUser;
+
     String[] permissions= new String[]{Manifest.permission.ACCESS_FINE_LOCATION};
 
     @Override
@@ -32,12 +40,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        FirebaseApp.initializeApp(this);
+
+//        Crashlytics.getInstance().crash();
+
         String locale = getResources().getConfiguration().locale.getCountry();
         Log.i(TAG, "locale: " + locale + " default: " + Locale.getDefault());
 
         if(Build.VERSION.SDK_INT >= 23) {
             if(checkPermissions(this)){
                 doLoginWithCheckInet();
+            } else {
+                Toast.makeText(this, getResources().getString(R.string.check_permission), Toast.LENGTH_LONG).show();
+                finishAffinity();
             }
         } else {
             doLoginWithCheckInet();
@@ -48,32 +63,31 @@ public class MainActivity extends AppCompatActivity {
         new InternetCheck(internet -> {
             Log.e(TAG, String.valueOf(internet));
             if(internet) {
-                if(Preferences.checkDetail(getApplicationContext(), "login")){
-                    Intent intent = new Intent(MainActivity.this, HomeActivity.class);
-                    startActivity(intent);
-                    finish();
-                } else {
+                mAuth = FirebaseAuth.getInstance();
+                currentUser = mAuth.getCurrentUser();
+                if(currentUser==null){
                     Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                     startActivity(intent);
                     finish();
+                } else {
+                    Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                    startActivity(intent);
+                    finish();
                 }
+//                if(Preferences.checkDetail(getApplicationContext(), "login")){
+//                    Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+//                    startActivity(intent);
+//                    finish();
+//                } else {
+//                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+//                    startActivity(intent);
+//                    finish();
+//                }
             } else {
                 Toast.makeText(this, getResources().getString(R.string.no_internet_connection_toast), Toast.LENGTH_LONG).show();
                 finishAffinity();
             }
         });
-    }
-
-    private void doLogin(){
-        if(Preferences.checkDetail(getApplicationContext(), "login")){
-            Intent intent = new Intent(MainActivity.this, HomeActivity.class);
-            startActivity(intent);
-            finish();
-        } else {
-            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-            startActivity(intent);
-            finish();
-        }
     }
 
     private boolean checkPermissions(Activity activity) {

@@ -39,7 +39,7 @@
     <string name="feedback_hint">Berikan umpan balik disini...</string>
     <string name="submit_label">Berikan</string>
     <string name="cancel_label">Batal</string>
-    <string name="please_wait">Mohon menunggu</string>
+    <string name="please_wait">Mohon menunggu...</string>
     <string name="failed_to_open_place">Gagal membuka peta</string>
     <string name="atm_balance">Saldo ATM</string>
     <string name="open_maps">Buka di peta</string>
@@ -47,4 +47,6 @@
     <string name="reject">Tolak</string>
     <string name="reject_alert_body">Apakah kamu yakin untuk menolak tiket ini?</string>
     <string name="reject_alert_title">Tolak Tiket</string>
+    <string name="login_failed">Login Gagal</string>
+    <string name="login_successful">Login Berhasil</string>
 </resources>

@@ -11,6 +11,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -19,6 +21,9 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.swg.jalinatm.POJO.Vendor;
 
 public class Tracker implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
@@ -35,6 +40,11 @@ public class Tracker implements LocationListener, GoogleApiClient.ConnectionCall
     private Context context;
     private Vendor vendor;
 
+    private DatabaseReference database;
+    private GeoFire geoFire;
+
+    private String userKey;
+
     private void requestLocation() {
         this.locationRequest = new LocationRequest();
         this.locationRequest.setInterval(INTERVAL);
@@ -48,8 +58,18 @@ public class Tracker implements LocationListener, GoogleApiClient.ConnectionCall
     public Tracker(Context context, Vendor vendor) {
         this.context = context;
         this.vendor = vendor;
+        this.database = FirebaseDatabase.getInstance().getReference().child("location");
+        this.geoFire = new GeoFire(database);
         requestLocation();
         this.googleClient = new GoogleApiClient.Builder(context).addApi(LocationServices.API).addConnectionCallbacks(this).addOnConnectionFailedListener(this).build();
+    }
+
+    public String getUserKey() {
+        return userKey;
+    }
+
+    public void setUserKey(String userKey) {
+        this.userKey = userKey;
     }
 
     public void startLocationUpdate() {
@@ -93,6 +113,18 @@ public class Tracker implements LocationListener, GoogleApiClient.ConnectionCall
                 vendor.setLoc(new LatLng(this.location.getLatitude(), this.location.getLongitude()));
             }
             vendor.setLastUpdateTime(System.currentTimeMillis());
+        }
+        if(userKey!=null){
+            this.geoFire.setLocation("1" + userKey, new GeoLocation(location.getLatitude(), location.getLongitude()), new GeoFire.CompletionListener() {
+                @Override
+                public void onComplete(String key, DatabaseError error) {
+                    if (error != null) {
+                        Log.e(TAG,"There was an error saving the location to GeoFire: " + error);
+                    } else {
+                        Log.i(TAG,"Location saved on server successfully!");
+                    }
+                }
+            });
         }
     }
 

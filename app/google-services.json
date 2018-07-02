@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "802433942981",
+    "firebase_url": "https://vynamic-operation-7b1bc.firebaseio.com",
+    "project_id": "vynamic-operation-7b1bc",
+    "storage_bucket": "vynamic-operation-7b1bc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:802433942981:android:2dd697e15eb612dc",
+        "android_client_info": {
+          "package_name": "com.swg.jalinatm"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "802433942981-4mpljomu4325432l1o3hnugtss40n76i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASewFN8zPs25xjlQfNxNjwL-6OpJFSRzA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

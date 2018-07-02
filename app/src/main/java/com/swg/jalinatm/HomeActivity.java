@@ -6,6 +6,7 @@ import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -24,6 +25,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.swg.jalinatm.Adapter.TicketListAdapter;
 import com.swg.jalinatm.POJO.ATM;
 import com.swg.jalinatm.POJO.Ticket;
@@ -65,6 +73,10 @@ public class HomeActivity extends AppCompatActivity {
     private Vendor vendor;
     private int triggerTouchItem = 0;
     private int triggerTouchMenu = 0;
+    private DatabaseReference databaseEngineers;
+    private FirebaseAuth mAuth;
+    private FirebaseUser currentUser;
+    private String userKey;
 
     private final static String TAG = "HomeActivity";
 
@@ -89,6 +101,8 @@ public class HomeActivity extends AppCompatActivity {
             Log.e(TAG, String.valueOf(internet));
             if(internet) {
                 tracker = new Tracker(this, vendor);
+                checkUser();
+                getUserId();
                 if(!tracker.isGoogleApiConnected()) tracker.connectGoogleApi();
                 reloadDataandView();
             } else {
@@ -161,10 +175,17 @@ public class HomeActivity extends AppCompatActivity {
 //                        break;
                     case R.id.nav_log_out:
                         triggerTouchMenu = 0;
-                        Preferences.deleteKey(getApplicationContext(), "login");
-                        Intent intent_login = new Intent(HomeActivity.this, LoginActivity.class);
-                        startActivity(intent_login);
-                        finish();
+                        new InternetCheck(internet -> {
+                            if(internet){
+                                FirebaseAuth.getInstance().signOut();
+                                Intent intent_login = new Intent(HomeActivity.this, LoginActivity.class);
+                                startActivity(intent_login);
+                                finish();
+                            } else {
+                                Toast.makeText(this, getResources().getString(R.string.no_internet_connection_toast), Toast.LENGTH_LONG).show();
+                                Log.e(TAG, "no internet connection");
+                            }
+                        });
                         break;
                 }
             } else {
@@ -175,6 +196,38 @@ public class HomeActivity extends AppCompatActivity {
             return true;
         });
 
+    }
+
+    private void getUserId(){
+        databaseEngineers = FirebaseDatabase.getInstance().getReference().child("engineers");
+        databaseEngineers.orderByChild("email").equalTo(currentUser.getEmail()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot child: dataSnapshot.getChildren()) {
+                    userKey = child.getKey();
+                    Log.e(TAG, "userKey: " + userKey);
+                    if(tracker!=null){
+                        tracker.setUserKey(userKey);
+                    }
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e(TAG, "loadKey:onCancelled", databaseError.toException());
+            }
+        });
+    }
+
+    private void checkUser(){
+        mAuth = FirebaseAuth.getInstance();
+        currentUser = mAuth.getCurrentUser();
+        if(currentUser==null){
+            Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
     }
 
     private void reloadDataandView(){
