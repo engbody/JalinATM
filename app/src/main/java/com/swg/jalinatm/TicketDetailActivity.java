@@ -31,6 +31,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -107,6 +109,8 @@ public class TicketDetailActivity extends AppCompatActivity implements View.OnCl
     private int reject = 0;
     private int accept = 0;
     private GoogleMap googleMap;
+    private FirebaseAuth mAuth;
+    private FirebaseUser currentUser;
 
     private ChildEventListener ticketListener;
     private ChildEventListener atmListener;
@@ -274,18 +278,24 @@ public class TicketDetailActivity extends AppCompatActivity implements View.OnCl
                 (dialog, which) -> {
                     dialog.dismiss();
 
-                    if(flag==1){
-                        databaseTickets.child(ticketid).child("status").setValue(2);
-                    } else if(flag==2){
-                        databaseTickets.child(ticketid).child("status").setValue(15);
+                    mAuth = FirebaseAuth.getInstance();
+                    currentUser = mAuth.getCurrentUser();
+                    if(currentUser==null){
+                        Intent intent = new Intent(TicketDetailActivity.this, LoginActivity.class);
+                        startActivity(intent);
                     } else {
-                        databaseTickets.child(ticketid).child("status").setValue(4);
+                        if(flag==1){
+                            databaseTickets.child(ticketid).child("status").setValue(2);
+                        } else if(flag==2){
+                            databaseTickets.child(ticketid).child("status").setValue(15);
+                        } else {
+                            databaseTickets.child(ticketid).child("status").setValue(4);
+                        }
+
+                        databaseTickets.child(ticketid).child("lastUpdatedBy").setValue(vendorKey);
+                        databaseTickets.child(ticketid).child("lastUpdatedTime").setValue(System.currentTimeMillis());
+                        setResult(1);
                     }
-
-                    databaseTickets.child(ticketid).child("lastUpdatedBy").setValue(vendorKey);
-                    databaseTickets.child(ticketid).child("lastUpdatedTime").setValue(System.currentTimeMillis());
-
-                    setResult(1);
                     finish();
                 });
         alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, getResources().getString(R.string.alert_no_button),

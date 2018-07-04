@@ -421,9 +421,16 @@ public class HomeActivity extends AppCompatActivity {
                     setVisibilityLoading();
                     new InternetCheck(internet -> {
                         if (internet) {
-                            databaseTickets.removeEventListener(ticketsListener);
-                            ticketListAdapter.tickets = new ArrayList<Ticket>();
-                            reloadDataandView();
+                            currentUser = mAuth.getCurrentUser();
+                            if(currentUser==null){
+                                Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
+                                startActivity(intent);
+                                finish();
+                            } else {
+                                databaseTickets.removeEventListener(ticketsListener);
+                                ticketListAdapter.tickets = new ArrayList<Ticket>();
+                                reloadDataandView();
+                            }
                         } else {
                             setVisibilityNoInternet();
                         }

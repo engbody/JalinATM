@@ -9,8 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
+import com.swg.jalinatm.LoginActivity;
 import com.swg.jalinatm.POJO.Ticket;
 import com.swg.jalinatm.POJO.VendorFirebase;
 import com.swg.jalinatm.R;
@@ -135,6 +138,9 @@ public class TicketListFirebaseAdapter extends RecyclerView.Adapter<RecyclerView
         @BindView(R.id.ticket_desc)
         TextView ticket_desc;
 
+        private FirebaseAuth mAuth;
+        private FirebaseUser currentUser;
+
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
@@ -167,21 +173,29 @@ public class TicketListFirebaseAdapter extends RecyclerView.Adapter<RecyclerView
 
         @Override
         public void onClick(View v) {
-            int checkworking = 0;
-            for(int a=0;a<tickets.size();a++){
-                if(tickets.get(a).getStatus()==2L) checkworking=1;
-            }
-            int itempos = getAdapterPosition();
-            Intent intent = new Intent(activity, TicketDetailActivity.class);
-            Bundle bundle = new Bundle();
-            bundle.putParcelable("ticket", Parcels.wrap(tickets.get(itempos)));
+            mAuth = FirebaseAuth.getInstance();
+            currentUser = mAuth.getCurrentUser();
+            if(currentUser==null){
+                Intent intent = new Intent(activity, LoginActivity.class);
+                activity.startActivity(intent);
+                activity.finish();
+            } else {
+                int checkworking = 0;
+                for (int a = 0; a < tickets.size(); a++) {
+                    if (tickets.get(a).getStatus() == 2L) checkworking = 1;
+                }
+                int itempos = getAdapterPosition();
+                Intent intent = new Intent(activity, TicketDetailActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("ticket", Parcels.wrap(tickets.get(itempos)));
 //            bundle.putParcelable("vendor", Parcels.wrap(vendor));
-            intent.putExtras(bundle);
-            intent.putExtra("vendorkey", vendor.getKey());
-            intent.putExtra("ticketid", tickets.get(itempos).getTicketNumber());
-            intent.putExtra("atmid", tickets.get(itempos).getAtm_id());
-            intent.putExtra("ticketcheck", checkworking);
-            activity.startActivityForResult(intent, 0);
+                intent.putExtras(bundle);
+                intent.putExtra("vendorkey", vendor.getKey());
+                intent.putExtra("ticketid", tickets.get(itempos).getTicketNumber());
+                intent.putExtra("atmid", tickets.get(itempos).getAtm_id());
+                intent.putExtra("ticketcheck", checkworking);
+                activity.startActivityForResult(intent, 0);
+            }
         }
     }
 }
