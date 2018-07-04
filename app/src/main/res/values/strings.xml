@@ -60,4 +60,7 @@
     <string name="reject_alert_title">Reject Ticket</string>
     <string name="login_failed">Login Failed</string>
     <string name="login_successful">Login Successful</string>
+    <string name="giveup">Give Up</string>
+    <string name="giveup_alert_ticket">Give Up Ticket</string>
+    <string name="giveup_alert_body">Are you sure to give up this ticket?</string>
 </resources>

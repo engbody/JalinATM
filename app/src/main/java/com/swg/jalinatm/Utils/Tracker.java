@@ -25,6 +25,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.swg.jalinatm.POJO.Vendor;
+import com.swg.jalinatm.POJO.VendorFirebase;
 
 public class Tracker implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
@@ -38,7 +39,7 @@ public class Tracker implements LocationListener, GoogleApiClient.ConnectionCall
     private Location location;
     private PendingResult<Status> pendingResult;
     private Context context;
-    private Vendor vendor;
+    private VendorFirebase vendor;
 
     private DatabaseReference database;
     private GeoFire geoFire;
@@ -55,7 +56,7 @@ public class Tracker implements LocationListener, GoogleApiClient.ConnectionCall
     public Tracker() {
     }
 
-    public Tracker(Context context, Vendor vendor) {
+    public Tracker(Context context, VendorFirebase vendor) {
         this.context = context;
         this.vendor = vendor;
         this.database = FirebaseDatabase.getInstance().getReference().child("location");
@@ -97,23 +98,23 @@ public class Tracker implements LocationListener, GoogleApiClient.ConnectionCall
         return googleClient != null && googleClient.isConnected();
     }
 
-    public Vendor getVendor(){
+    public VendorFirebase getVendor(){
         return this.vendor;
     }
 
     @Override
     public void onLocationChanged(Location location) {
         Log.i(TAG, "Location changed");
-        if(vendor!=null){
-            if(this.location!=null) {
-                vendor.setPrevLoc(new LatLng(this.location.getLatitude(), this.location.getLongitude()));
-                vendor.setLoc(new LatLng(location.getLatitude(), location.getLongitude()));
-            } else {
-                this.location = location;
-                vendor.setLoc(new LatLng(this.location.getLatitude(), this.location.getLongitude()));
-            }
-            vendor.setLastUpdateTime(System.currentTimeMillis());
-        }
+//        if(vendor!=null){
+//            if(this.location!=null) {
+//                vendor.setPrevLoc(new LatLng(this.location.getLatitude(), this.location.getLongitude()));
+//                vendor.setLoc(new LatLng(location.getLatitude(), location.getLongitude()));
+//            } else {
+//                this.location = location;
+//                vendor.setLoc(new LatLng(this.location.getLatitude(), this.location.getLongitude()));
+//            }
+//            vendor.setLastUpdateTime(System.currentTimeMillis());
+//        }
         if(userKey!=null){
             this.geoFire.setLocation("1" + userKey, new GeoLocation(location.getLatitude(), location.getLongitude()), new GeoFire.CompletionListener() {
                 @Override

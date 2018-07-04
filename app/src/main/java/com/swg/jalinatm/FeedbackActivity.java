@@ -13,6 +13,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.swg.jalinatm.POJO.Vendor;
+import com.swg.jalinatm.POJO.VendorFirebase;
 import com.swg.jalinatm.Utils.InternetCheck;
 import com.swg.jalinatm.Utils.Tracker;
 
@@ -38,7 +39,7 @@ public class FeedbackActivity extends Activity implements AdapterView.OnItemSele
     private String statusValueSelected;
     private String feedback;
     private Tracker tracker;
-    private Vendor vendor;
+    private VendorFirebase vendor;
     private int triggerButton = 0;
 
     private static final String TAG = "FeedbackActivity";
@@ -59,7 +60,7 @@ public class FeedbackActivity extends Activity implements AdapterView.OnItemSele
         submit_button.setOnClickListener(this);
         cancel_button.setOnClickListener(this);
 
-        vendor = (Vendor) Parcels.unwrap(getIntent().getParcelableExtra("vendor"));
+        vendor = (VendorFirebase) Parcels.unwrap(getIntent().getParcelableExtra("vendor"));
         if(vendor==null){
             Log.e(TAG, "error vendor null");
             finish();
@@ -87,26 +88,26 @@ public class FeedbackActivity extends Activity implements AdapterView.OnItemSele
         if(triggerButton==0) {
             triggerButton=1;
             switch (v.getId()) {
-                case R.id.submit_button:
-                    new InternetCheck(internet -> {
-                        if (internet) {
-                            triggerButton=0;
-                            if (et_feedback.getText() == null) feedback = "";
-                            feedback = et_feedback.getText().toString();
-                            Log.i(TAG, statusSelected + " " + statusValueSelected + " " + feedback + " " + vendor.getLoc().latitude + " " + vendor.getLoc().longitude);
-                            setResult(1);
-                            finish();
-                        } else {
-                            triggerButton=0;
-                            Log.e(TAG, getResources().getString(R.string.no_internet_connection));
-                            Toast.makeText(this, getResources().getString(R.string.no_internet_connection_toast), Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                    break;
-                case R.id.cancel_button:
-                    triggerButton=0;
-                    finish();
-                    break;
+//                case R.id.submit_button:
+//                    new InternetCheck(internet -> {
+//                        if (internet) {
+//                            triggerButton=0;
+//                            if (et_feedback.getText() == null) feedback = "";
+//                            feedback = et_feedback.getText().toString();
+//                            Log.i(TAG, statusSelected + " " + statusValueSelected + " " + feedback + " " + vendor.getLoc().latitude + " " + vendor.getLoc().longitude);
+//                            setResult(1);
+//                            finish();
+//                        } else {
+//                            triggerButton=0;
+//                            Log.e(TAG, getResources().getString(R.string.no_internet_connection));
+//                            Toast.makeText(this, getResources().getString(R.string.no_internet_connection_toast), Toast.LENGTH_SHORT).show();
+//                        }
+//                    });
+//                    break;
+//                case R.id.cancel_button:
+//                    triggerButton=0;
+//                    finish();
+//                    break;
             }
         } else {
             Toast.makeText(this, getResources().getString(R.string.please_wait), Toast.LENGTH_LONG).show();

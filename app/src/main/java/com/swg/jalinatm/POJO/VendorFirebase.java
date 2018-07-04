@@ -1,6 +1,9 @@
 package com.swg.jalinatm.POJO;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.IgnoreExtraProperties;
+
+import org.parceler.Parcel;
 
 import java.util.ArrayList;
 
@@ -9,6 +12,7 @@ import java.util.ArrayList;
  */
 
 @IgnoreExtraProperties
+@Parcel
 public class VendorFirebase {
 
     private ArrayList<Long> ATMs;
@@ -17,6 +21,7 @@ public class VendorFirebase {
     private int status;
     private Long timestamp;
     private int zoom_level;
+    private String key;
 
     public VendorFirebase(ArrayList<Long> ATMs, ArrayList<Long> center, String name, int status, Long timestamp, int zoom_level) {
         this.ATMs = ATMs;
@@ -28,6 +33,14 @@ public class VendorFirebase {
     }
 
     public VendorFirebase() {
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 
     public ArrayList<Long> getATMs() {

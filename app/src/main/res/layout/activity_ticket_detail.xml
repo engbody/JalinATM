@@ -139,7 +139,7 @@
                         android:textSize="18sp"/>
 
                     <TextView
-                        android:id="@+id/tv_summary"
+                        android:id="@+id/tv_code"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -345,7 +345,7 @@
                     android:orientation="horizontal">
 
                     <android.support.v7.widget.AppCompatButton
-                        android:id="@+id/btn_accept"
+                        android:id="@+id/btn_accept_giveup"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"

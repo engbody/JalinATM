@@ -26,6 +26,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.swg.jalinatm.POJO.ATM;
 import com.swg.jalinatm.POJO.Vendor;
+import com.swg.jalinatm.POJO.VendorFirebase;
 import com.swg.jalinatm.Utils.CurrencyFormatter;
 import com.swg.jalinatm.Utils.InternetCheck;
 import com.swg.jalinatm.Utils.Tracker;
@@ -65,7 +66,7 @@ public class ATMDetailActivity extends AppCompatActivity implements OnMapReadyCa
     private final static int PLACE_PICKER_REQUEST = 5;
 
     private ATM atm;
-    private Vendor vendor;
+    private VendorFirebase vendor;
     private Tracker tracker;
     private int triggerTouchButton = 0;
 
@@ -89,7 +90,7 @@ public class ATMDetailActivity extends AppCompatActivity implements OnMapReadyCa
         location_layout.setBackground(getDrawable(R.drawable.rounded_layout));
 
         atm = (ATM) Parcels.unwrap(getIntent().getParcelableExtra("atm"));
-        vendor = (Vendor) Parcels.unwrap(getIntent().getParcelableExtra("vendor"));
+        vendor = (VendorFirebase) Parcels.unwrap(getIntent().getParcelableExtra("vendor"));
         if(atm!=null || vendor!=null) {
             Log.i(TAG, atm.getId());
 
@@ -174,17 +175,17 @@ public class ATMDetailActivity extends AppCompatActivity implements OnMapReadyCa
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PLACE_PICKER_REQUEST) {
-            if (resultCode == RESULT_OK) {
-                Place place = PlacePicker.getPlace(this, data);
-                String toastMsg = String.format("Address: %s", place.getAddress() + " Vendor Location Latitude: " + tracker.getVendor().getLoc().latitude);
-                Log.e(TAG, "device location: " + tracker.getVendor().getLoc().latitude + " " + tracker.getVendor().getLoc().longitude);
-                Log.e(TAG, "place location: " + place.getLatLng().latitude + " " + place.getLatLng().longitude);
-                Toast.makeText(this, toastMsg, Toast.LENGTH_LONG).show();
-                setResult(1);
-                finish();
-            }
-        }
+//        if (requestCode == PLACE_PICKER_REQUEST) {
+//            if (resultCode == RESULT_OK) {
+//                Place place = PlacePicker.getPlace(this, data);
+//                String toastMsg = String.format("Address: %s", place.getAddress() + " Vendor Location Latitude: " + tracker.getVendor().getLoc().latitude);
+//                Log.e(TAG, "device location: " + tracker.getVendor().getLoc().latitude + " " + tracker.getVendor().getLoc().longitude);
+//                Log.e(TAG, "place location: " + place.getLatLng().latitude + " " + place.getLatLng().longitude);
+//                Toast.makeText(this, toastMsg, Toast.LENGTH_LONG).show();
+//                setResult(1);
+//                finish();
+//            }
+//        }
     }
 
     @Override

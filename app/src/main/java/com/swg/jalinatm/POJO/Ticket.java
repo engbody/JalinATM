@@ -12,23 +12,32 @@ import org.parceler.Parcel;
 public class Ticket{
 
     private String ticketNumber;
-    private String summary;
+    private String incidentName;
     private String description;
-    private String machineNumber;
-    private String ticketState;
+    private Long errorCode;
+    private Long atm_id;
+    private Long status;
 
     public Ticket() {
     }
 
-    public Ticket(String ticketNumber, String summary, String description, String machineNumber, String ticketState) {
+    public Ticket(String ticketNumber, Long errorCode, String incidentName, String description, Long atm_id, Long status) {
         this.ticketNumber = ticketNumber;
-        this.summary = summary;
+        this.errorCode = errorCode;
+        this.incidentName = incidentName;
         this.description = description;
-        this.machineNumber = machineNumber;
-        this.ticketState = ticketState;
+        this.atm_id = atm_id;
+        this.status = status;
     }
 
-//    protected Ticket(android.os.Parcel in) {
+    public Long getErrorCode() {
+        return errorCode;
+    }
+
+    public void setErrorCode(Long errorCode) {
+        this.errorCode = errorCode;
+    }
+    //    protected Ticket(android.os.Parcel in) {
 //        ticketNumber = in.readString();
 //        summary = in.readString();
 //        description = in.readString();
@@ -56,12 +65,12 @@ public class Ticket{
         this.ticketNumber = ticketNumber;
     }
 
-    public String getSummary() {
-        return summary;
+    public String getIncidentName() {
+        return incidentName;
     }
 
-    public void setSummary(String summary) {
-        this.summary = summary;
+    public void setIncidentName(String incidentName) {
+        this.incidentName = incidentName;
     }
 
     public String getDescription() {
@@ -72,20 +81,20 @@ public class Ticket{
         this.description = description;
     }
 
-    public String getMachineNumber() {
-        return machineNumber;
+    public Long getAtm_id() {
+        return atm_id;
     }
 
-    public void setMachineNumber(String machineNumber) {
-        this.machineNumber = machineNumber;
+    public void setAtm_id(Long atm_id) {
+        this.atm_id = atm_id;
     }
 
-    public String getTicketState() {
-        return ticketState;
+    public Long getStatus() {
+        return status;
     }
 
-    public void setTicketState(String ticketState) {
-        this.ticketState = ticketState;
+    public void setStatus(Long status) {
+        this.status = status;
     }
 
 //    @Override

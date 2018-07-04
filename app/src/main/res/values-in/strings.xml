@@ -49,4 +49,7 @@
     <string name="reject_alert_title">Tolak Tiket</string>
     <string name="login_failed">Login Gagal</string>
     <string name="login_successful">Login Berhasil</string>
+    <string name="giveup">Menyerah</string>
+    <string name="giveup_alert_ticket">Menyerah Tiket</string>
+    <string name="giveup_alert_body">Apakah anda yakin menyerah untuk tiket ini?</string>
 </resources>
