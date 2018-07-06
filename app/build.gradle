@@ -45,6 +45,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:16.0.2'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.4'
     implementation 'com.firebase:geofire-android:2.3.1'
+    implementation 'com.google.firebase:firebase-messaging:17.1.0'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'

@@ -15,16 +15,16 @@ import java.util.ArrayList;
 @Parcel
 public class VendorFirebase {
 
-    private ArrayList<Long> ATMs;
     private ArrayList<Long> center;
     private String name;
-    private int status;
+    private String email;
+    private Long atm_id;
+    private Long status;
     private Long timestamp;
-    private int zoom_level;
+    private Long zoom_level;
     private String key;
 
-    public VendorFirebase(ArrayList<Long> ATMs, ArrayList<Long> center, String name, int status, Long timestamp, int zoom_level) {
-        this.ATMs = ATMs;
+    public VendorFirebase(ArrayList<Long> center, String name, Long status, Long timestamp, Long zoom_level) {
         this.center = center;
         this.name = name;
         this.status = status;
@@ -35,20 +35,28 @@ public class VendorFirebase {
     public VendorFirebase() {
     }
 
+    public Long getAtm_id() {
+        return atm_id;
+    }
+
+    public void setAtm_id(Long atm_id) {
+        this.atm_id = atm_id;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public String getKey() {
         return key;
     }
 
     public void setKey(String key) {
         this.key = key;
-    }
-
-    public ArrayList<Long> getATMs() {
-        return ATMs;
-    }
-
-    public void setATMs(ArrayList<Long> ATMs) {
-        this.ATMs = ATMs;
     }
 
     public ArrayList<Long> getCenter() {
@@ -67,11 +75,11 @@ public class VendorFirebase {
         this.name = name;
     }
 
-    public int getStatus() {
+    public Long getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(Long status) {
         this.status = status;
     }
 
@@ -83,11 +91,11 @@ public class VendorFirebase {
         this.timestamp = timestamp;
     }
 
-    public int getZoom_level() {
+    public Long getZoom_level() {
         return zoom_level;
     }
 
-    public void setZoom_level(int zoom_level) {
+    public void setZoom_level(Long zoom_level) {
         this.zoom_level = zoom_level;
     }
 }

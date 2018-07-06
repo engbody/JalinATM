@@ -29,6 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -37,6 +38,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.swg.jalinatm.Adapter.TicketListAdapter;
 import com.swg.jalinatm.Adapter.TicketListFirebaseAdapter;
 import com.swg.jalinatm.POJO.ATM;
@@ -44,6 +47,7 @@ import com.swg.jalinatm.POJO.Ticket;
 import com.swg.jalinatm.POJO.Vendor;
 import com.swg.jalinatm.POJO.VendorFirebase;
 import com.swg.jalinatm.Utils.InternetCheck;
+import com.swg.jalinatm.Utils.MyFirebaseMessagingService;
 import com.swg.jalinatm.Utils.Preferences;
 import com.swg.jalinatm.Utils.Tracker;
 
@@ -80,7 +84,7 @@ public class HomeActivity extends AppCompatActivity {
 //    private Vendor vendor;
     private VendorFirebase vendorFirebase;
     private int triggerTouchMenu = 0;
-    private DatabaseReference databaseEngineers, databaseTickets;
+    private DatabaseReference databaseEngineers, databaseTickets, databaseATM;
     private ChildEventListener ticketsListener;
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
@@ -105,6 +109,10 @@ public class HomeActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_drawer_white);
 
+        if(Preferences.getDetail(getApplicationContext(), "devicetoken") == null){
+            setPrefDeviceToken();
+        }
+
 //        vendor = new Vendor("ID001", "Thomas", "BNI");
 
         new InternetCheck(internet -> {
@@ -118,54 +126,6 @@ public class HomeActivity extends AppCompatActivity {
                 setVisibilityNoInternet();
             }
         });
-
-//        list_tickets.setOnItemClickListener((parent, view, position, id) -> {
-//            if(triggerTouchItem==0) {
-//                triggerTouchItem = 1;
-//                if (parent.getItemAtPosition(position) != null) {
-//                    if (tracker != null) {
-//                        if (vendor.getLoc() != null)
-//                            Log.i(TAG, "getLatitude: " + vendor.getLoc().latitude + " getLongitude: " + vendor.getLoc().longitude);
-//                    }
-//                    Ticket ticket = (Ticket) parent.getItemAtPosition(position);
-//                    Log.i(TAG, "Ticket no: " + ticket.getTicketNumber());
-//
-//                    ATM atmTicket = new ATM();
-//                    for (ATM atm : atmList) {
-//                        if (atm.getId().equals(ticket.getMachineNumber())) {
-//                            atmTicket = atm;
-//                            break;
-//                        }
-//                    }
-//
-//                    int ticketcheckint = 0;
-//                    for (Ticket ticketcheck : ticketList){
-//                        if(ticketcheck.getTicketState()!=null){
-//                            if(ticketcheck.getTicketState().equals("1")){
-//                                ticketcheckint=1;
-//                                break;
-//                            }
-//                        }
-//                    }
-//
-//                    triggerTouchItem = 0;
-//                    Intent intent = new Intent(HomeActivity.this, TicketDetailActivity.class);
-//                    Bundle bundle = new Bundle();
-//                    bundle.putParcelable("ticket", Parcels.wrap(ticket));
-//                    bundle.putParcelable("atm", Parcels.wrap(atmTicket));
-//                    bundle.putParcelable("vendor", Parcels.wrap(vendor));
-////                    bundle.putInt("ticketcheck", ticketcheckint);
-//                    intent.putExtras(bundle);
-//                    intent.putExtra("ticketcheck", ticketcheckint);
-////                intent.putExtra("ticket", Parcels.wrap(ticket));
-////                intent.putExtra("atm", Parcels.wrap(atmTicket));
-//                    startActivityForResult(intent, 0);
-//                }
-//            } else {
-//                Toast.makeText(this, getResources().getString(R.string.please_wait), Toast.LENGTH_LONG).show();
-//                Log.e(TAG, "user touch more than once");
-//            }
-//        });
 
         getIntentData();
 
@@ -207,6 +167,16 @@ public class HomeActivity extends AppCompatActivity {
 
     }
 
+    private void setPrefDeviceToken(){
+        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(this, new OnSuccessListener<InstanceIdResult>() {
+            @Override
+            public void onSuccess(InstanceIdResult instanceIdResult) {
+                String deviceToken = instanceIdResult.getToken();
+                Preferences.setDetail(getApplicationContext(), "devicetoken", deviceToken);
+            }
+        });
+    }
+
     private void getUserId(){
         databaseEngineers = FirebaseDatabase.getInstance().getReference().child("engineers");
         databaseEngineers.orderByChild("email").equalTo(currentUser.getEmail()).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -215,11 +185,23 @@ public class HomeActivity extends AppCompatActivity {
                 for (DataSnapshot child: dataSnapshot.getChildren()) {
                     userKey = child.getKey();
                     Log.e(TAG, "userKey: " + userKey);
-                    vendorFirebase = child.getValue(VendorFirebase.class);
+                    vendorFirebase = new VendorFirebase();
                     if(tracker!=null && userKey!=null){
                         tracker.setUserKey(userKey);
                         vendorFirebase.setKey(userKey);
+                        String devicetoken = Preferences.getDetail(getApplicationContext(), "devicetoken");
+                        databaseEngineers.child(userKey).child("notificationTokens").child(devicetoken).setValue(true);
                     }
+                    ArrayList<Long> center = new ArrayList<Long>();
+                    for(DataSnapshot grandChild: child.child("center").getChildren()){
+                        center.add(grandChild.getValue(Long.class));
+                    }
+                    vendorFirebase.setName(child.child("name").getValue(String.class));
+                    vendorFirebase.setEmail(child.child("email").getValue(String.class));
+                    vendorFirebase.setStatus(child.child("status").getValue(Long.class));
+                    vendorFirebase.setTimestamp(child.child("timestamp").getValue(Long.class));
+                    vendorFirebase.setZoom_level(child.child("zoom_level").getValue(Long.class));
+                    vendorFirebase.setCenter(center);
                     LinearLayoutManager manager = new LinearLayoutManager(HomeActivity.this);
                     DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(HomeActivity.this, manager.getOrientation());
                     ticketList = new ArrayList<Ticket>();
@@ -256,7 +238,7 @@ public class HomeActivity extends AppCompatActivity {
                 if(dataSnapshot.exists()){
                     Log.e(TAG, "snapshotAdded: " + dataSnapshot.toString());
 
-                    Ticket ticket = new Ticket(dataSnapshot.getKey(), (Long) dataSnapshot.child("code").getValue(), (String) dataSnapshot.child("incidentName").getValue(), (String) dataSnapshot.child("description").getValue(), (Long) dataSnapshot.child("atm_id").getValue(), (Long) dataSnapshot.child("status").getValue());
+                    Ticket ticket = new Ticket(dataSnapshot.getKey(), (Long) dataSnapshot.child("code").getValue(), (String) dataSnapshot.child("incidentName").getValue(), (String) dataSnapshot.child("description").getValue(), (Long) dataSnapshot.child("atm_id").getValue(), (Long) dataSnapshot.child("status").getValue(), (Long) dataSnapshot.child("reportedTime").getValue());
                     if(ticket.getStatus()==11L || ticket.getStatus()==2L) {
                         if (ticketListAdapter.isItemExist(dataSnapshot.getKey())) {
                             ticketListAdapter.spillAdapter(dataSnapshot.getKey());
@@ -282,9 +264,8 @@ public class HomeActivity extends AppCompatActivity {
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 if(dataSnapshot.exists()){
                     Log.e(TAG, "snapshotChanged: " + dataSnapshot.toString());
-                    Log.e(TAG, "string: " + s);
 
-                    Ticket ticket = new Ticket(dataSnapshot.getKey(), (Long) dataSnapshot.child("code").getValue(), (String) dataSnapshot.child("incidentName").getValue(), (String) dataSnapshot.child("description").getValue(), (Long) dataSnapshot.child("atm_id").getValue(), (Long) dataSnapshot.child("status").getValue());
+                    Ticket ticket = new Ticket(dataSnapshot.getKey(), (Long) dataSnapshot.child("code").getValue(), (String) dataSnapshot.child("incidentName").getValue(), (String) dataSnapshot.child("description").getValue(), (Long) dataSnapshot.child("atm_id").getValue(), (Long) dataSnapshot.child("status").getValue(), (Long) dataSnapshot.child("reportedTime").getValue());
                     if(ticket.getStatus()==11L || ticket.getStatus()==2L) {
                         if (ticketListAdapter.isItemExist(dataSnapshot.getKey())) {
                             ticketListAdapter.spillAdapter(dataSnapshot.getKey());
@@ -322,35 +303,25 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void reloadDataandView(){
+        Log.e(TAG, "masuk reloadDataandView");
         databaseTickets = FirebaseDatabase.getInstance().getReference().child("tickets");
+        databaseATM = FirebaseDatabase.getInstance().getReference().child("ATMs");
         addTicketsListener();
-        for(int i=0;i<vendorFirebase.getATMs().size();i++){
-            databaseTickets.orderByChild("atm_id").equalTo(vendorFirebase.getATMs().get(i)).addChildEventListener(ticketsListener);
-        }
+        Log.e(TAG, "vendorKey: " + vendorFirebase.getKey());
+        databaseATM.orderByChild("engineer_id").equalTo(Long.parseLong(vendorFirebase.getKey())).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot child: dataSnapshot.getChildren()){
+                    Log.e(TAG, child.getKey());
+                    databaseTickets.orderByChild("atm_id").equalTo(Long.parseLong(child.getKey())).addChildEventListener(ticketsListener);
+                }
+            }
 
-
-
-//        atmList = new ArrayList<ATM>();
-//        ticketList.add(new Ticket("#1", "Cash Handler Fatal Error", "ATM tidak mengeluarkan uang, dan tidak respond", "ATM1", null));
-//        ticketList.add(new Ticket("#2", "Outstanding Down", "ATM tidak ada koneksi", "ATM2", null)); //accepted
-////        ticketList.add(new Ticket("#3", "Cash Out", "Uang di ATM habis", "ATM3", "2")); //rejected
-//        atmList.add(new ATM("ATM1", "Di dalam gedung Grand Indonesia", null, new LatLng(-6.1950034, 106.81978660000004)));
-//        atmList.add(new ATM("ATM2", "Di dalam gedung Epiwalk", null, new LatLng(-6.2182575, 106.83518779999997)));
-//        atmList.add(new ATM("ATM3", "Di dalam gedung Mall Kelapa Gading", null, new LatLng(-6.157519, 106.90802080000003)));
-//        atmList.add(new ATM("ATM4", "Di dalam gedung Universitas Bina Nusantara Anggrek", null, new LatLng(-6.2018064, 106.78159240000002)));
-
-//        Geocoder geocoder = new Geocoder(getApplicationContext(), getResources().getConfiguration().locale);
-//        for (ATM atm : atmList) {
-//            try {
-//                List<Address> addresses = geocoder.getFromLocation(atm.getLoc().latitude, atm.getLoc().longitude, 1);
-//                Address address = addresses.get(0);
-//                atm.setAddress(address.getAddressLine(0));
-//
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//                Log.e(TAG, e.getMessage());
-//            }
-//        }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e(TAG, "loadKey:onCancelled", databaseError.toException());
+            }
+        });
 
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             if (ticketListAdapter.getItemCount() == 0) {
@@ -358,7 +329,7 @@ public class HomeActivity extends AppCompatActivity {
             } else {
                 setVisibilityDataAvailable();
             }
-        }, 1000);
+        }, 2000);
     }
 
     private void getIntentData(){
@@ -445,14 +416,6 @@ public class HomeActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-//    @Override
-//    protected void onSaveInstanceState(Bundle outState) {
-//        outState.putParcelableArrayList("ticketList", ticketList);
-//        outState.putParcelableArrayList("atmList", atmList);
-//        Log.i(TAG, "SaveInstance");
-//        super.onSaveInstanceState(outState);
-//    }
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -488,8 +451,6 @@ public class HomeActivity extends AppCompatActivity {
             if(ticketListAdapter.getItemCount()<1){
                 setVisibilityNoData();
             }
-//            setVisibilityLoading();
-//            reloadDataandView();
         }
     }
 }

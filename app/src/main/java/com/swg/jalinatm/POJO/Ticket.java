@@ -17,17 +17,19 @@ public class Ticket{
     private Long errorCode;
     private Long atm_id;
     private Long status;
+    private Long reportedTime;
 
     public Ticket() {
     }
 
-    public Ticket(String ticketNumber, Long errorCode, String incidentName, String description, Long atm_id, Long status) {
+    public Ticket(String ticketNumber, Long errorCode, String incidentName, String description, Long atm_id, Long status, Long reportedTime) {
         this.ticketNumber = ticketNumber;
         this.errorCode = errorCode;
         this.incidentName = incidentName;
         this.description = description;
         this.atm_id = atm_id;
         this.status = status;
+        this.reportedTime = reportedTime;
     }
 
     public Long getErrorCode() {
@@ -37,6 +39,15 @@ public class Ticket{
     public void setErrorCode(Long errorCode) {
         this.errorCode = errorCode;
     }
+
+    public Long getReportedTime() {
+        return reportedTime;
+    }
+
+    public void setReportedTime(Long reportedTime) {
+        this.reportedTime = reportedTime;
+    }
+
     //    protected Ticket(android.os.Parcel in) {
 //        ticketNumber = in.readString();
 //        summary = in.readString();

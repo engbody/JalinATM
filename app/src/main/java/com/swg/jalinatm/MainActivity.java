@@ -15,9 +15,12 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.swg.jalinatm.Utils.InternetCheck;
 import com.swg.jalinatm.Utils.Preferences;
 
@@ -65,6 +68,13 @@ public class MainActivity extends AppCompatActivity {
             if(internet) {
                 mAuth = FirebaseAuth.getInstance();
                 currentUser = mAuth.getCurrentUser();
+                FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(this, new OnSuccessListener<InstanceIdResult>() {
+                    @Override
+                    public void onSuccess(InstanceIdResult instanceIdResult) {
+                        String deviceToken = instanceIdResult.getToken();
+                        Preferences.setDetail(getApplicationContext(), "devicetoken", deviceToken);
+                    }
+                });
                 if(currentUser==null){
                     Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                     startActivity(intent);

@@ -22,6 +22,8 @@ import com.swg.jalinatm.TicketDetailActivity;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -108,6 +110,16 @@ public class TicketListFirebaseAdapter extends RecyclerView.Adapter<RecyclerView
 
     public void refillAdapter(Ticket ticket){
         this.tickets.add(ticket);
+        Collections.sort(tickets, new Comparator<Ticket>() {
+            @Override
+            public int compare(Ticket o1, Ticket o2) {
+                if(o1.getStatus().equals(o2.getStatus())){
+                    return o1.getReportedTime().compareTo(o2.getReportedTime());
+                } else {
+                    return o1.getStatus().compareTo(o2.getStatus());
+                }
+            }
+        });
         notifyDataSetChanged();
     }
 
