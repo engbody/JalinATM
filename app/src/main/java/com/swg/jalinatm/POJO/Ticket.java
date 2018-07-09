@@ -15,14 +15,14 @@ public class Ticket{
     private String incidentName;
     private String description;
     private Long errorCode;
-    private Long atm_id;
+    private String atm_id;
     private Long status;
     private Long reportedTime;
 
     public Ticket() {
     }
 
-    public Ticket(String ticketNumber, Long errorCode, String incidentName, String description, Long atm_id, Long status, Long reportedTime) {
+    public Ticket(String ticketNumber, Long errorCode, String incidentName, String description, String atm_id, Long status, Long reportedTime) {
         this.ticketNumber = ticketNumber;
         this.errorCode = errorCode;
         this.incidentName = incidentName;
@@ -92,11 +92,11 @@ public class Ticket{
         this.description = description;
     }
 
-    public Long getAtm_id() {
+    public String getAtm_id() {
         return atm_id;
     }
 
-    public void setAtm_id(Long atm_id) {
+    public void setAtm_id(String atm_id) {
         this.atm_id = atm_id;
     }
 

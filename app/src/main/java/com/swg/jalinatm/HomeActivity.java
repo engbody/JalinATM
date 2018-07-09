@@ -238,7 +238,7 @@ public class HomeActivity extends AppCompatActivity {
                 if(dataSnapshot.exists()){
                     Log.e(TAG, "snapshotAdded: " + dataSnapshot.toString());
 
-                    Ticket ticket = new Ticket(dataSnapshot.getKey(), (Long) dataSnapshot.child("code").getValue(), (String) dataSnapshot.child("incidentName").getValue(), (String) dataSnapshot.child("description").getValue(), (Long) dataSnapshot.child("atm_id").getValue(), (Long) dataSnapshot.child("status").getValue(), (Long) dataSnapshot.child("reportedTime").getValue());
+                    Ticket ticket = new Ticket(dataSnapshot.getKey(), (Long) dataSnapshot.child("code").getValue(), (String) dataSnapshot.child("incidentName").getValue(), (String) dataSnapshot.child("description").getValue(), (String) dataSnapshot.child("atm_id").getValue(), (Long) dataSnapshot.child("status").getValue(), (Long) dataSnapshot.child("reportedTime").getValue());
                     if(ticket.getStatus()==11L || ticket.getStatus()==2L) {
                         if (ticketListAdapter.isItemExist(dataSnapshot.getKey())) {
                             ticketListAdapter.spillAdapter(dataSnapshot.getKey());
@@ -250,6 +250,7 @@ public class HomeActivity extends AppCompatActivity {
                         }
                     }
 
+                    Log.e(TAG, "ticketListAdapter.getItemCount: " + ticketListAdapter.getItemCount());
                     if(ticketListAdapter.getItemCount()>0){
                         setVisibilityDataAvailable();
                     } else {
@@ -265,7 +266,7 @@ public class HomeActivity extends AppCompatActivity {
                 if(dataSnapshot.exists()){
                     Log.e(TAG, "snapshotChanged: " + dataSnapshot.toString());
 
-                    Ticket ticket = new Ticket(dataSnapshot.getKey(), (Long) dataSnapshot.child("code").getValue(), (String) dataSnapshot.child("incidentName").getValue(), (String) dataSnapshot.child("description").getValue(), (Long) dataSnapshot.child("atm_id").getValue(), (Long) dataSnapshot.child("status").getValue(), (Long) dataSnapshot.child("reportedTime").getValue());
+                    Ticket ticket = new Ticket(dataSnapshot.getKey(), (Long) dataSnapshot.child("code").getValue(), (String) dataSnapshot.child("incidentName").getValue(), (String) dataSnapshot.child("description").getValue(), (String) dataSnapshot.child("atm_id").getValue(), (Long) dataSnapshot.child("status").getValue(), (Long) dataSnapshot.child("reportedTime").getValue());
                     if(ticket.getStatus()==11L || ticket.getStatus()==2L) {
                         if (ticketListAdapter.isItemExist(dataSnapshot.getKey())) {
                             ticketListAdapter.spillAdapter(dataSnapshot.getKey());
@@ -277,6 +278,7 @@ public class HomeActivity extends AppCompatActivity {
                         }
                     }
 
+                    Log.e(TAG, "ticketListAdapter.getItemCount: " + ticketListAdapter.getItemCount());
                     if(ticketListAdapter.getItemCount()>0){
                         setVisibilityDataAvailable();
                     } else {
@@ -305,15 +307,15 @@ public class HomeActivity extends AppCompatActivity {
     private void reloadDataandView(){
         Log.e(TAG, "masuk reloadDataandView");
         databaseTickets = FirebaseDatabase.getInstance().getReference().child("tickets");
-        databaseATM = FirebaseDatabase.getInstance().getReference().child("ATMs");
+        databaseATM = FirebaseDatabase.getInstance().getReference().child("ATMss");
         addTicketsListener();
         Log.e(TAG, "vendorKey: " + vendorFirebase.getKey());
-        databaseATM.orderByChild("engineer_id").equalTo(Long.parseLong(vendorFirebase.getKey())).addListenerForSingleValueEvent(new ValueEventListener() {
+        databaseATM.orderByChild("engineerID").equalTo(vendorFirebase.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot child: dataSnapshot.getChildren()){
                     Log.e(TAG, child.getKey());
-                    databaseTickets.orderByChild("atm_id").equalTo(Long.parseLong(child.getKey())).addChildEventListener(ticketsListener);
+                    databaseTickets.orderByChild("atm_id").equalTo(child.getKey()).addChildEventListener(ticketsListener);
                 }
             }
 
@@ -392,6 +394,8 @@ public class HomeActivity extends AppCompatActivity {
                     setVisibilityLoading();
                     new InternetCheck(internet -> {
                         if (internet) {
+                            checkUser();
+                            getUserId();
                             currentUser = mAuth.getCurrentUser();
                             if(currentUser==null){
                                 Intent intent = new Intent(HomeActivity.this, LoginActivity.class);

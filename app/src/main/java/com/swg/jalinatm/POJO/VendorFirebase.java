@@ -16,6 +16,7 @@ import java.util.ArrayList;
 public class VendorFirebase {
 
     private ArrayList<Long> center;
+    private ArrayList<String> ATMs;
     private String name;
     private String email;
     private Long atm_id;
@@ -33,6 +34,14 @@ public class VendorFirebase {
     }
 
     public VendorFirebase() {
+    }
+
+    public ArrayList<String> getATMs() {
+        return ATMs;
+    }
+
+    public void setATMs(ArrayList<String> ATMs) {
+        this.ATMs = ATMs;
     }
 
     public Long getAtm_id() {

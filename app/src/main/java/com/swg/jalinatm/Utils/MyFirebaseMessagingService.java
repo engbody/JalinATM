@@ -65,9 +65,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private void sendNotification(String title, String messages){
         mNotifications = new Notifications(this);
 
-        Notification.Builder nb = mNotifications.
+        NotificationCompat.Builder nb = mNotifications.
                 getAndroidChannelNotification(title, messages);
 
         mNotifications.getManager().notify(101, nb.build());
+        mNotifications.playNotificationSound();
     }
 }

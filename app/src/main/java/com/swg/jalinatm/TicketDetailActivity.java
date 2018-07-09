@@ -114,7 +114,7 @@ public class TicketDetailActivity extends AppCompatActivity implements View.OnCl
 
     private ChildEventListener ticketListener;
     private ChildEventListener atmListener;
-    private DatabaseReference databaseEngineers, databaseTickets, databaseATM;
+    private DatabaseReference databaseEngineers, databaseTickets, databaseATM, databaseLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,6 +158,7 @@ public class TicketDetailActivity extends AppCompatActivity implements View.OnCl
         databaseEngineers = FirebaseDatabase.getInstance().getReference().child("engineers");
         databaseTickets = FirebaseDatabase.getInstance().getReference().child("tickets");
         databaseATM = FirebaseDatabase.getInstance().getReference().child("ATMs");
+        databaseLocation = FirebaseDatabase.getInstance().getReference().child("location");
 
         if(ticketid != null){
             tv_ticket.setText(ticket.getTicketNumber());
@@ -199,7 +200,7 @@ public class TicketDetailActivity extends AppCompatActivity implements View.OnCl
 
 
     private void addATMListener(){
-        databaseATM.child(atmid.toString()).child("position").addValueEventListener(new ValueEventListener() {
+        databaseLocation.child("0"+atmid.toString()).child("l").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Log.e(TAG, dataSnapshot.toString());
